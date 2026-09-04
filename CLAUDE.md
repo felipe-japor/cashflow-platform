@@ -22,6 +22,8 @@ Solução para o desafio técnico de Arquiteto de Soluções (controle de fluxo 
 - **Observabilidade**: OpenTelemetry desde o início (vendor-neutral), não SDK de vendor específico — funciona igual local (console/Jaeger) e Azure (Monitor).
 - **Compute alvo**: Azure Container Apps, não App Service — os serviços são workers headless (sem endpoint HTTP nativo), App Service exigiria listener HTTP artificial.
 
+**ADRs não ficam represadas até a issue #4.** Apesar de a redação formal dos 5 ADRs estar isolada como issue própria, qualquer decisão arquitetural nova ou revisada durante o processo atualiza o ADR correspondente (ou cria um novo) no momento em que a decisão é tomada — não espera a issue #4 ser formalmente trabalhada. A issue #4 cobre o que sobrar de redação pura no fim; decisão registrada tarde é decisão que se perde ou diverge do código.
+
 ## Time de agentes (`.claude/agents/`)
 
 | Agente | Arquivo | Papel |
