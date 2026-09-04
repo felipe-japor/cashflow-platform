@@ -36,6 +36,18 @@ O "dia" de negócio (`Transaction.Data` e `DailyConsolidation.Data`) é definido
 
 Motivo: nenhum requisito do desafio menciona comerciante multi-fuso ou fuso configurável; modelar suporte a isso agora seria generalizar para um caso hipotético (viola KISS). A conversão de timestamp real para "dia de negócio" acontece uma única vez, na borda (registro do lançamento / publicação e consumo do evento) — a partir daí, a coluna `Data` nas duas tabelas é `date` (Postgres), sem ambiguidade de hora ou fuso carregada pelas camadas seguintes.
 
+### 4. Instância compartilhada de PostgreSQL (ownership lógico separado)
+
+Na implementação proposta, os serviços de Lançamentos e Consolidado possuem ownership lógico separado sobre seus dados, porém utilizam a mesma instância de PostgreSQL para reduzir a complexidade operacional da solução. A comunicação assíncrona elimina a dependência síncrona entre os serviços, garantindo que uma indisponibilidade da aplicação de Consolidação não impeça o registro de novos lançamentos. Entretanto, o compartilhamento da mesma infraestrutura de banco de dados representa um ponto de contenção comum. Sob carga elevada no serviço de Consolidação, recursos compartilhados como CPU, I/O e conexões podem afetar indiretamente o serviço de Lançamentos. Em um cenário de produção com requisitos mais rígidos de isolamento e disponibilidade, a evolução recomendada seria utilizar bancos ou instâncias de banco independentes para cada serviço.
+
+Essa evolução (bancos/instâncias independentes por serviço) é candidata natural da arquitetura de transição tratada na issue #26 (diferencial) — não antecipada aqui.
+
+### 5. Sem cache, réplica de leitura ou particionamento no escopo inicial
+
+O requisito de carga do Consolidado (NFR02 — 50 req/s, ≤5% de perda) não justifica, de antemão, cache, réplica de leitura ou particionamento de tabela: a projeção de consolidado diário tem baixa cardinalidade (poucas linhas, um registro por dia) e é acessada via índice único em `Data` (seção 2 desta ADR) — PostgreSQL sozinho atende essa carga com margem ampla. Introduzir essas estratégias agora, sem evidência de que são necessárias, seria otimização prematura (viola KISS/YAGNI).
+
+Essas estratégias só serão consideradas mediante evidência real obtida no teste de carga (issue #20) — não construídas preventivamente.
+
 ## Trade-offs considerados
 
 | Alternativa | Por que não foi escolhida |
@@ -47,7 +59,7 @@ Motivo: nenhum requisito do desafio menciona comerciante multi-fuso ou fuso conf
 
 ## Consequências
 
-- Cada serviço mantém seu próprio banco PostgreSQL (database-per-service), sem acesso cruzado a tabelas do outro serviço — reforça o isolamento de disponibilidade (NFR01) também no nível de dado, não só de rede.
+- Cada serviço mantém seu próprio banco lógico PostgreSQL, com ownership lógico separado e sem acesso cruzado a tabelas do outro serviço — mas ambos os bancos lógicos vivem na mesma instância de PostgreSQL (seção 4), o que introduz um ponto de contenção de recursos compartilhados não presente num cenário de instâncias totalmente isoladas.
 - A tabela de outbox (ADR-002) vive no mesmo banco/transação da tabela `Transaction`, usando JSONB para o payload do evento.
 - `DailyConsolidation` tem `Id UUID` como PK e índice único em `Data`; toda leitura por data/período (RF04) usa esse índice, não a PK.
 - Se, no futuro, houver necessidade real de suporte a múltiplos fusos horários por comerciante, será uma mudança de escopo tratada como tal (nova ADR ou revisão desta), não uma extensão do tipo `DateOnly` hoje.
