@@ -1,0 +1,3 @@
+# Pendente: definido na etapa de scaffolding dos serviços.
+# Vai incluir: PostgreSQL (bancos separados por serviço), RabbitMQ, Redis,
+# e os dois serviços da aplicação (Lançamentos, Consolidado).

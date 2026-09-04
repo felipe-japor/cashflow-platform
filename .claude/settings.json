@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"E:/Arch/.claude/hooks/log_prompt.py\"",
+            "timeout": 10,
+            "statusMessage": "Registrando prompt em used-prompts/log.md"
+          }
+        ]
+      }
+    ]
+  }
+}
