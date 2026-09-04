@@ -231,3 +231,41 @@ Excelentes argumentos de resposta, gostei que discordou do argumento concordando
 ### 2026-09-04 — 025
 
 já vou ver o PR. Apenas quero deixar registrado no contexto que apesar de as escrita das ADRs estarem isoladas no item 5, qualquer decisão arquitetural que venhamos a mudar ou tomar durante o processo, podemos atualizar ou criar novas ADRs de acordo
+
+---
+
+### 2026-09-04 — 026
+
+sim, pode seguir, já temos a arquitetura relativamente bem definida
+
+---
+
+### 2026-09-04 — 027
+
+pensando aqui, para manter simples e coerente com o desafio talvez seja melhor usar um mesmo servidor de banco de dados para ambos, mas separando logicamente os dados por serviço. Isso vai simplificar o processo de desenvolvimento e debug. Considerando que são apenas 4 dias, acho q é uma decisão mais acertada. Podemos mapear essa possível evolução em um diagrama de uma arquitetura de transição futura. O que acha?
+
+---
+
+### 2026-09-04 — 028
+
+faz sentido esse risco real, mas pela simplicidade e velocidade, vamos mapear esse risco possível do ADR, um trade-off simples de implementação simplificada. 
+
+"Na implementação proposta, os serviços de Lançamentos e Consolidado possuem ownership lógico separado sobre seus dados, porém utilizam a mesma instância de PostgreSQL para reduzir a complexidade operacional da solução. A comunicação assíncrona elimina a dependência síncrona entre os serviços, garantindo que uma indisponibilidade da aplicação de Consolidação não impeça o registro de novos lançamentos. Entretanto, o compartilhamento da mesma infraestrutura de banco de dados representa um ponto de contenção comum. Sob carga elevada no serviço de Consolidação, recursos compartilhados como CPU, I/O e conexões podem afetar indiretamente o serviço de Lançamentos. Em um cenário de produção com requisitos mais rígidos de isolamento e disponibilidade, a evolução recomendada seria utilizar bancos ou instâncias de banco independentes para cada serviço."
+
+O requisito de 50 req/s não justifica inicialmente cache, réplica de leitura ou particionamento. A projeção de consolidado diário possui baixa cardinalidade e acesso indexado por data, portanto PostgreSQL é suficiente para atender essa carga com ampla margem. Estratégias adicionais seriam consideradas apenas após evidência obtida por testes de carga.
+
+Faz sentido nesse contexto, para ganhos de velocidade indexar por data
+
+Essas considerações podem ser inseridas no ADR relacionado
+
+---
+
+### 2026-09-04 — 029
+
+sim, aprova os dois
+
+---
+
+### 2026-09-04 — 030
+
+sim, siga para a #4. Embora com isso fechemos a task de "Escrever os ADRs", é preciso lembrar que quaisquer alterações ou re-definições durante o processo deve alterar os ADRs que já foram realizados (considerando que estamos ainda na fase de planejamento), nas demais fases devem ser criados novos ADRs salvo sob orientação do contrário
