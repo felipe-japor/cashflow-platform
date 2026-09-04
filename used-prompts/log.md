@@ -319,3 +319,9 @@ sim, não vamos retroagir absolutamente nada. Isso virará o novo padrão de fec
 ### 2026-09-04 — 038
 
 pode subir ambos os prs
+
+---
+
+### 2026-09-04 — 039
+
+adicionei a regra de permissão nesse ambiente
