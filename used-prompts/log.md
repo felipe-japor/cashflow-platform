@@ -319,3 +319,39 @@ sim, não vamos retroagir absolutamente nada. Isso virará o novo padrão de fec
 ### 2026-09-04 — 038
 
 pode subir ambos os prs
+
+---
+
+### 2026-09-04 — 039
+
+adicionei a regra de permissão nesse ambiente
+
+---
+
+### 2026-09-04 — 040
+
+pode limpar as branches antigas
+
+---
+
+### 2026-09-04 — 041
+
+cancelei o PR 39, não vamos subir uma modificação pontual no log. No próximo PR, suba o log normalmente, não precisamos abrir PRs específicos para o log de prompts utilizados. Podem ir como parte de uma issue maior.
+
+---
+
+### 2026-09-04 — 042
+
+pode aprovar o PR 40
+
+---
+
+### 2026-09-04 — 043
+
+Antes de seguir com a issue #6, quero simplificar ao máximo a estrutura do projeto, atendendo aos requisitos. Estou pensando em usar em repository simples por entidade (acham q é complexidade prematura?), Interfaces nas fronteiras com mutabilidade (facilitar adoção de outros bancos ou mensageria), no caso de factory o próprio DI já resolveria nosso caso. Isolando em 3/4 camadas, API, application, Domain e (talvez) Infrastructure. O código deve ser assíncrono por padrão implementando o async corretamente em operações de I/O e propagando o cancellationtoken desde o endpoint até o banco - desde que o cancelamento não permita deixar uma operação de negócio parcialmente concluída. O que o Arquiteto e o dev sr. pensam a respeito disso?
+
+---
+
+### 2026-09-04 — 044
+
+1- Nesse contexto, vamos implementar um repositório para Transaction e Consolidation então, mas sem a necessidade de um IRepository genérico; do ponto de vista dos demais pontos levantados, estou de acordo. Dado isso, pode seguir com a issue #6
