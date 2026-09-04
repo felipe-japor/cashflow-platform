@@ -24,6 +24,10 @@ Solução para o desafio técnico de Arquiteto de Soluções (controle de fluxo 
 
 **ADRs não ficam represadas até a issue #4.** Apesar de a redação formal dos 5 ADRs estar isolada como issue própria, qualquer decisão arquitetural nova ou revisada durante o processo atualiza o ADR correspondente (ou cria um novo) no momento em que a decisão é tomada — não espera a issue #4 ser formalmente trabalhada. A issue #4 cobre o que sobrar de redação pura no fim; decisão registrada tarde é decisão que se perde ou diverge do código.
 
+**Como decidir entre atualizar um ADR existente ou criar um novo — depende da fase:**
+- **Enquanto ainda estivermos na Fase 1 (planejamento)**: mudança ou redefinição de uma decisão já registrada **atualiza o ADR existente in-place** — a arquitetura ainda está convergindo, não faz sentido acumular ADRs conflitantes de um período em que a decisão nem tinha estabilizado.
+- **A partir da Fase 2 em diante (implementação, qualidade, validação)**: mudança ou redefinição de uma decisão já registrada **cria um ADR novo**, que referencia e supera o anterior — não edita o antigo. Registro histórico imutável: decisão tomada durante a execução é um evento que aconteceu, editar o ADR anterior apagaria esse rastro. Só editar um ADR já existente nessa fase se Felipe orientar explicitamente o contrário para aquele caso específico.
+
 ## Time de agentes (`.claude/agents/`)
 
 | Agente | Arquivo | Papel |
