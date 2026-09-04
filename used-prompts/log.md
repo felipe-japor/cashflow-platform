@@ -313,3 +313,9 @@ vi o histórico no git e está um pouco poluído com o merge. Como estou trabalh
 ### 2026-09-04 — 037
 
 sim, não vamos retroagir absolutamente nada. Isso virará o novo padrão de fechamento de PR. Pode inserir nas convenções do claude.md e explique a data/hora em que o novo padrão foi aplicado
+
+---
+
+### 2026-09-04 — 038
+
+pode subir ambos os prs
