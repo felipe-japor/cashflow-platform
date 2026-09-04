@@ -205,3 +205,20 @@ dado o arquivo pdf, podemos isolar facilmente nos arquivos do projeto os requisi
 ### 2026-09-04 — 022
 
 Não há necessidade o NFR02 está correto. aceitei o PR.
+
+---
+
+### 2026-09-04 — 023
+
+acabei aprovanado no github novamente. Seguimos para a issue 2.
+
+---
+
+### 2026-09-04 — 024
+
+Em respeito ao 2 considere o Core domain: "Transaction" (Id, data, Tipo (credito ou debito), valor, descricao) e "DailyConsolidation" (Data, creditos, debitos, saldo)
+Me parece que seriam suficientes.
+
+Do ponto de vista de capacidade de negócio, podemos pensar em: receber lançamentos, consolidar créditos, consolidar débitos, calcular saldo diário, calcular saldo consolidado por data
+
+Me diga suas considerações
