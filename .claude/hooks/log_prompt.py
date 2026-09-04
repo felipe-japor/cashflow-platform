@@ -18,12 +18,22 @@ LOG_FILE = Path(__file__).resolve().parents[2] / "used-prompts" / "log.md"
 ENTRY_HEADER_RE = re.compile(r"^### \d{4}-\d{2}-\d{2} — (\d+)\s*$", re.MULTILINE)
 
 
+# Marcadores de conteudo sintetico injetado pelo harness (notificacoes de
+# tarefa em background, etc.) que chegam ao UserPromptSubmit como se fossem
+# prompt do usuario, mas nao sao digitados por ninguem — nunca logar.
+# Bug real encontrado e corrigido em 2026-09-04 (ver used-prompts/log.md):
+# entradas 011/019/021/023/025/028 eram notificacoes de sistema, nao prompts.
+SYNTHETIC_MARKERS = ("<task-notification>", "<system-reminder>")
+
+
 def read_prompt_text(payload: dict) -> str:
     # Nomes de campo candidatos para o texto do prompt, dependendo da versao
     # do harness. Usa o primeiro que existir e nao for vazio.
     for key in ("prompt", "user_prompt", "message", "text"):
         value = payload.get(key)
         if isinstance(value, str) and value.strip():
+            if any(marker in value for marker in SYNTHETIC_MARKERS):
+                return ""
             return value
     return ""
 
