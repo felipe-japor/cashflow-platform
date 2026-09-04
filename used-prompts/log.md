@@ -210,15 +210,24 @@ Não há necessidade o NFR02 está correto. aceitei o PR.
 
 ### 2026-09-04 — 023
 
-acabei aprovanado no github novamente. Seguimos para a issue 2.
+A respeito do terceiro conceito do domínio, tem razão, esqueci de mapear o evento em si
+1- DailyConsolidation deve ser um read model materializado para sustentar SLA de 50req/s. Calculado on-the-fly pode realmente não bater a meta, o que o arquiteto acha disso?
+2- Não acho q a Data seria uma boa chave de DailyConsolidation. Chaves deveriam ser imutáveis, a data carrega uma regra de negócio implícita, traz problemas com fusos horários e trazem falta de identificação semântica. Pensando em um UUID como chave primária, e a data pode se tornar um índice no futuro caso tenhamos problemas de performance. (Do ponto de vista do transaction também seria um UUID) 
+
+3- Sobre a falta do terceiro conceito, está correto, esqueci de mapear o evento. Pode mapea-lo nas definições)
+
+4-Tem razão quanto as redundâncias na capacidade. Pode seguir isolando para evitarmos tal redundância.
+
+Nas decisões de arquitetura 1 e 2, quero a opinião do arquiteto.
 
 ---
 
 ### 2026-09-04 — 024
 
-Em respeito ao 2 considere o Core domain: "Transaction" (Id, data, Tipo (credito ou debito), valor, descricao) e "DailyConsolidation" (Data, creditos, debitos, saldo)
-Me parece que seriam suficientes.
+Excelentes argumentos de resposta, gostei que discordou do argumento concordando com a conclusão. Atualiza no ADR. Concordo como utilização de DateOnly. Pode seguir
 
-Do ponto de vista de capacidade de negócio, podemos pensar em: receber lançamentos, consolidar créditos, consolidar débitos, calcular saldo diário, calcular saldo consolidado por data
+---
 
-Me diga suas considerações
+### 2026-09-04 — 025
+
+já vou ver o PR. Apenas quero deixar registrado no contexto que apesar de as escrita das ADRs estarem isoladas no item 5, qualquer decisão arquitetural que venhamos a mudar ou tomar durante o processo, podemos atualizar ou criar novas ADRs de acordo
