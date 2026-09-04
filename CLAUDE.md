@@ -6,7 +6,7 @@ Solução para o desafio técnico de Arquiteto de Soluções (controle de fluxo 
 
 ## Convenções
 
-- Commits: sempre em pt-BR, claros sobre o que foi comitado.
+- Commits: sempre em pt-BR, claros sobre o que foi comitado, com prefixo [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `test:`, `chore:`, `refactor:`, `ci:` etc.) — mensagem descritiva em português depois dos dois pontos.
 - "Suba o código" = criar feature branch + Pull Request. Nunca push direto em `main`/`master`.
 - Simplicidade acima de tudo (KISS) — a implementação deve ser a mais simples possível que ainda atenda a todos os requisitos (obrigatórios + diferenciais). DRY, SOLID e padrões de projeto aplicados onde fazem sentido de verdade, nunca por decoração.
 - Todo prompt do Felipe neste projeto é logado automaticamente em `used-prompts/log.md` via hook — não precisa fazer isso manualmente.
