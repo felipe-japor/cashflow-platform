@@ -19,7 +19,19 @@ Solução para o desafio técnico de Arquiteto de Soluções: controle de lança
 
 ## Como rodar localmente
 
-> Pendente.
+Pré-requisitos: Docker e Docker Compose.
+
+```bash
+docker compose up --build
+```
+
+Sobe Postgres (bancos lógicos `lancamentos` e `consolidado` na mesma instância — ADR-003), RabbitMQ (broker local de referência — ADR-004/ADR-005) e os dois serviços:
+
+- Lançamentos: http://localhost:5101
+- Consolidado: http://localhost:5102
+- RabbitMQ management UI: http://localhost:15672 (guest/guest)
+
+> Nesta etapa (scaffolding — issue #6) os serviços só expõem um endpoint raiz de verificação; os endpoints de negócio (registrar/consultar lançamentos, consultar saldo consolidado) chegam nas próximas issues. Instruções completas de validação local ponta a ponta são finalizadas na issue #22.
 
 ## Estrutura do repositório
 

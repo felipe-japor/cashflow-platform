@@ -33,7 +33,7 @@ A arquitetura alvo mapeia cada peça da solução para um serviço gerenciado eq
 
 ## Implementação de referência local (Docker Compose)
 
-Para desenvolvimento e para a avaliação do desafio, a solução roda **inteiramente local**, com todas as dependências de infraestrutura em componentes OSS via `docker-compose.yml` (hoje placeholder — conteúdo real na issue #6): um único container PostgreSQL (hospedando os dois bancos lógicos, mesmo padrão da arquitetura alvo) e RabbitMQ (broker), além dos dois serviços da aplicação.
+Para desenvolvimento e para a avaliação do desafio, a solução roda **inteiramente local**, com todas as dependências de infraestrutura em componentes OSS via `docker-compose.yml` (issue #6): um único container PostgreSQL (hospedando os dois bancos lógicos, mesmo padrão da arquitetura alvo) e RabbitMQ (broker), além dos dois serviços da aplicação.
 
 A portabilidade entre essa implementação de referência e a arquitetura alvo Azure descrita acima é sustentada por **interfaces + Factory na borda de infraestrutura de mensageria** — o código de domínio depende só da interface (por exemplo, "publicar evento"); qual implementação concreta é usada (RabbitMQ vs. Azure Service Bus) é resolvido por configuração/Factory, não por reescrita de lógica de domínio (NFR06). Cache não está no escopo comprometido inicialmente (ver tabela acima e ADR-003); se vier a ser necessário, a mesma estratégia de interface+Factory se aplicaria. O racional completo da estratégia de portabilidade está em ADR-005 (ainda a ser detalhado — issue #4).
 

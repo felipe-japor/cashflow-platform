@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+.git/
+.claude/
+docs/
+used-prompts/
+tests/
+*.md
