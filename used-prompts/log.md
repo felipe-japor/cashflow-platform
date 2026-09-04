@@ -269,3 +269,47 @@ sim, aprova os dois
 ### 2026-09-04 — 030
 
 sim, siga para a #4. Embora com isso fechemos a task de "Escrever os ADRs", é preciso lembrar que quaisquer alterações ou re-definições durante o processo deve alterar os ADRs que já foram realizados (considerando que estamos ainda na fase de planejamento), nas demais fases devem ser criados novos ADRs salvo sob orientação do contrário
+
+---
+
+### 2026-09-04 — 031
+
+sim, pode seguir
+
+---
+
+### 2026-09-04 — 032
+
+os xmls do draw.io estão adequados, mas os png estão com textos de fundo branco quebrando a visualização de outros textos. Consegue corrigir?
+
+---
+
+### 2026-09-04 — 033
+
+os png seguem com problemas
+
+---
+
+### 2026-09-04 — 034
+
+Resolvido.
+
+No diagrama de container, gostaria de indicar que o serviço de lançamentos e o consolidado serão APIs, também quero mais simetria e alinhamento entre os blocos, principalmente o comerciante está com setas bagunçadas e não alinhadas. pode fazer sentido colocar o comerciante no topo central do arquivo. Avalie e ajuste.
+
+---
+
+### 2026-09-04 — 035
+
+estão adequados
+
+---
+
+### 2026-09-04 — 036
+
+vi o histórico no git e está um pouco poluído com o merge. Como estou trabalhando sozinho no projeto, quando eu mandar ok no PR vamos fazer rebase nas branches de feature e merge squash na main, pra deixar o histórico mais linear e legível. Também vamos excluir os branches remotos após o aceite do PR. O arquiteto e o dev senior estão de acordo?
+
+---
+
+### 2026-09-04 — 037
+
+sim, não vamos retroagir absolutamente nada. Isso virará o novo padrão de fechamento de PR. Pode inserir nas convenções do claude.md e explique a data/hora em que o novo padrão foi aplicado
