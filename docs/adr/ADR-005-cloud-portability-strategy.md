@@ -1,6 +1,8 @@
-﻿# ADR-005: Estratégia de portabilidade para nuvem (interfaces + Factory)
+﻿# ADR-005: Estratégia de portabilidade para nuvem (interfaces + registro condicional via DI)
 
 > Status: aceito.
+>
+> **Revisão (2026-09-07)**: a decisão original (issue #4/#5) usava o termo "Factory" para o mecanismo que escolhe a implementação concreta por ambiente. Durante a issue #6 (estruturação da solução), ficou definido que o próprio container de injeção de dependência do .NET, com registro condicional por ambiente no composition root, já cumpre esse papel — sem necessidade de uma classe Factory explícita adicional. O projeto ainda não foi entregue, então este ADR foi ajustado in-place em vez de suplantado por um novo (decisão de Felipe, exceção pontual à regra de "Fase 2+ cria ADR novo" registrada em `CLAUDE.md`). A decisão de fundo — portabilidade via interface na borda de mensageria — não muda; só o mecanismo concreto que a implementa.
 
 ## Contexto
 
@@ -10,7 +12,7 @@ O ponto de infraestrutura onde essa tensão (rodar local vs. mapear para Azure) 
 
 ## Decisão
 
-Interfaces + Factory na borda de infraestrutura de **mensageria**. O código de domínio (handlers de publicação do outbox, consumer do Consolidado) depende apenas de uma interface própria da aplicação (por exemplo, algo como "publicar evento" / "consumir evento"), nunca do SDK concreto de RabbitMQ ou do Azure Service Bus diretamente. Uma Factory, resolvida por configuração (variável de ambiente/appsettings conforme o ambiente), decide qual implementação concreta da interface é instanciada — RabbitMQ ao rodar localmente via Docker Compose, Azure Service Bus ao rodar na arquitetura-alvo.
+Interfaces na borda de infraestrutura de **mensageria**, com o container de injeção de dependência (não uma classe Factory explícita) escolhendo a implementação concreta por ambiente. O código de domínio (handlers de publicação do outbox, consumer do Consolidado) depende apenas de uma interface própria da aplicação (`IEventPublisher`/`IEventConsumer`), nunca do SDK concreto de RabbitMQ ou do Azure Service Bus diretamente. O registro dessas interfaces no composition root (`Program.cs`/`DependencyInjection.cs`) é condicional por ambiente (variável de ambiente/appsettings) — RabbitMQ ao rodar localmente via Docker Compose, Azure Service Bus ao rodar na arquitetura-alvo. O container de DI do .NET já resolve esse papel de fábrica; uma classe Factory própria por cima seria uma camada de indireção sem valor adicional, já que a escolha é feita uma única vez, na inicialização — não em runtime, por requisição.
 
 Observabilidade é tratada à parte, fora desta ADR: OpenTelemetry é vendor-neutral por natureza (NFR05) — o mesmo código de instrumentação funciona local (exportando para console/Jaeger) e no Azure (exportando para Azure Monitor), apenas trocando o exporter configurado. Não precisa da mesma estratégia de interface + Factory porque a portabilidade já vem embutida no próprio padrão (OpenTelemetry já é a abstração).
 
@@ -19,11 +21,12 @@ Observabilidade é tratada à parte, fora desta ADR: OpenTelemetry é vendor-neu
 | Alternativa | Por que não foi escolhida |
 |---|---|
 | Acoplar o código de domínio diretamente ao SDK do Azure Service Bus, sem interface própria | Descartada porque quebraria a capacidade de rodar localmente sem depender de uma conta Azure — o próprio desafio pune um requisito obrigatório atendido de forma incompleta ou inexistente. Rodar localmente é um requisito obrigatório explícito ("README com instruções claras de como rodar localmente"), não uma conveniência de desenvolvimento. |
-| Aplicar a mesma estratégia de interface + Factory também para cache | Não há hoje um segundo backend de cache a abstrair: cache está fora do escopo inicial (ADR-003), pois o SLA de 50 req/s (NFR02) é atendido pelo PostgreSQL com índice em `Data`, dada a baixa cardinalidade do consolidado diário. Introduzir a abstração antes de haver duas implementações reais para alternar seria generalização prematura (viola KISS/YAGNI) — se cache vier a ser necessário (evidência de teste de carga, issue #20), a mesma estratégia de interface + Factory se aplicaria naquele momento. |
+| Classe Factory explícita (`IEventPublisherFactory`) por cima do registro de DI | Redundante: adicionaria uma camada de indireção só para replicar o que o container de DI já faz nativamente ao resolver `IEventPublisher` por ambiente na inicialização. Uma Factory explícita se justificaria se a escolha da implementação precisasse acontecer em runtime, por requisição — não é o caso aqui, a escolha é fixa por ambiente desde o startup. |
+| Aplicar a mesma estratégia de interface + registro condicional também para cache | Não há hoje um segundo backend de cache a abstrair: cache está fora do escopo inicial (ADR-003), pois o SLA de 50 req/s (NFR02) é atendido pelo PostgreSQL com índice em `Data`, dada a baixa cardinalidade do consolidado diário. Introduzir a abstração antes de haver duas implementações reais para alternar seria generalização prematura (viola KISS/YAGNI) — se cache vier a ser necessário (evidência de teste de carga, issue #20), a mesma estratégia se aplicaria naquele momento. |
 
 ## Consequências
 
-- A troca de implementação de mensageria (RabbitMQ ↔ Azure Service Bus) fica restrita a configuração/Factory, sem alteração de código de domínio — mesmo padrão já referenciado na ADR-004 para a escolha de broker.
-- O código de domínio e de aplicação nunca importa diretamente os pacotes/SDKs de RabbitMQ ou Azure Service Bus fora da camada de infraestrutura onde a Factory resolve a implementação concreta.
-- Se cache for adicionado no futuro com evidência real de necessidade, a mesma estratégia (interface + Factory) deve ser aplicada, mantendo consistência com a decisão desta ADR — mas isso não é antecipado nem construído hoje.
+- A troca de implementação de mensageria (RabbitMQ ↔ Azure Service Bus) fica restrita a configuração/registro de DI, sem alteração de código de domínio — mesmo padrão já referenciado na ADR-004 para a escolha de broker.
+- O código de domínio e de aplicação nunca importa diretamente os pacotes/SDKs de RabbitMQ ou Azure Service Bus fora da camada de infraestrutura onde o DI resolve a implementação concreta.
+- Se cache for adicionado no futuro com evidência real de necessidade, a mesma estratégia (interface + registro condicional no DI) deve ser aplicada, mantendo consistência com a decisão desta ADR — mas isso não é antecipado nem construído hoje.
 - OpenTelemetry continua sendo adotado desde o início nos dois serviços, independentemente desta ADR, por já ser vendor-neutral (NFR05).

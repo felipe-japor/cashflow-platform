@@ -361,3 +361,31 @@ Antes de seguir com a issue #6, quero simplificar ao máximo a estrutura do proj
 ### 2026-09-07 — 045
 
 certo, pode subir
+
+---
+
+### 2026-09-07 — 046
+
+revisei o código e aparentemente está ok. Pode seguir com a issue 7 e 8. São passíveis de conflitos, de forma que podem ser trabalhadas em conjunto.
+
+---
+
+### 2026-09-07 — 047
+
+precisamos criar uma issue, afinal é o RF02. Crie a issue como fase-2-implementação, req obrigatório. E pode trabalhar nela em conjunto com as issues atuais (subir no mesmo PR). Em paralelo, alinhe com o Arquiteto auxiliar e com o PO uma revisão dos requisitos no documento pdf e caso tenhamos esquecido de criar issues em algum ponto, me apresente uma lista.
+
+---
+
+### 2026-09-07 — 048
+
+4- cortaremos a projeção, não está nos RFs, gold-plating desnecessário
+3- vamos ajustar a documentação de acordo. Crie um evolution-roadmap.md com uma tabela explicando as expectativas de evolução que conversamos, motivação, gatilho e trade-off. 
+2- discorra com mais detalhes, não existe #42
+1- não entendi sua proposta, discorra com mais detalhes
+
+---
+
+### 2026-09-07 — 049
+
+2- ok, atualização simples no arquivo.
+1- O projeto ainda não está entregue e nem os ADRs, podemos ajustar os ADR existentes por hora. Só ajuste o ADR-005 ao invés de criar um novo ADR-006 por conta dessa decisão
