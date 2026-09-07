@@ -42,3 +42,30 @@ cobertos pelos testes de unidade/componente em `*.Domain.Tests` e `*.Application
 A asserção compara por **delta** (créditos antes/depois do POST), não por valor absoluto - os
 containers são de longa duração e o Postgres não é resetado entre execuções deste teste, então
 rodar mais de uma vez no mesmo dia não deve quebrar a asserção.
+
+## `ResilienciaIsolamentoServicosTests` (issue #19)
+
+Prova direta do NFR "Lançamentos não pode cair se Consolidado/o broker cair". Diferente do teste
+de caminho feliz acima, este derruba e restaura containers de verdade via `docker compose
+stop`/`start` (`rabbitmq` e `consolidado-api`) - nunca mock de exceção. Cada cenário:
+
+1. Derruba o container do serviço dependente.
+2. Confirma que `POST /lancamentos` continua respondendo 2xx.
+3. Restaura o container (em `finally`, mesmo se a asserção anterior falhar).
+4. Faz polling em `GET /consolidado/{data}` até o lançamento aceito durante a indisponibilidade
+   aparecer sozinho no consolidado - sem nenhum endpoint de "reprocessar" manual.
+
+Ver os comentários XML de `ResilienciaIsolamentoServicosTests.cs` para o detalhe de qual falha é
+simulada em cada cenário (broker vs. Consolidado) e por que o Postgres compartilhado (ADR-003) não
+é derrubado como forma de simular "Consolidado indisponível".
+
+Assim como o teste acima, requer os containers já no ar (`docker compose up --build -d`) e não
+entra no `dotnet test` de rotina - rode isoladamente:
+
+```
+dotnet test tests/EndToEnd.Tests/EndToEnd.Tests.csproj --filter "FullyQualifiedName~ResilienciaIsolamentoServicosTests"
+```
+
+**Atenção ao rodar localmente**: este teste para e reinicia containers do `docker-compose.yml` do
+próprio ambiente onde ele roda. Não rode em paralelo com outra suíte que dependa desses mesmos
+containers estarem sempre no ar.
