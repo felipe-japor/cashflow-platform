@@ -455,3 +455,39 @@ vou revisar. Notei uma questão no README.md da pasta dos diagramas,
 quero uma lista com bullets dos diagramas existentes, e quero que a imagem png de referência esteja linkada no arquivo de forma a conseguir ser visualizada no github.
 
 Leve em consideração o documento de arquitetura-alvo para desenhar um novo diagrama (seguindo o mesmo padrão png e xml) da arquitetura de transição e insira-o no contexto explicado acima.
+
+---
+
+### 2026-09-07 — 060
+
+pode aceitar os dois PRs
+
+---
+
+### 2026-09-07 — 061
+
+antes quero conversar com o arquiteto auxiliar a respeito do 15 e 16
+
+---
+
+### 2026-09-07 — 062
+
+a respeito da gestão de secrets, penso no ideal do azure vault, contudo na entrega não o utilizaremos. Temos o secret manager local, variáveis de ambiente, ou o uso de .env. Mesmo no user secrets, precisaríamos de um canal seguro para transmissão desses segredos. Estou em dúvidas do melhor custo x benefício, sem overengineer. O que pensa a respeito?
+
+---
+
+### 2026-09-07 — 063
+
+A respeito do healthcheck penso em apis simples de /health/live e health/ready para validar o processo http e o acesso ao banco, o que pensa a respeito?
+
+---
+
+### 2026-09-07 — 064
+
+quais os secrets e senhas que temos atualmente?
+
+---
+
+### 2026-09-07 — 065
+
+ambos são defaults descartáveis. ok, vamos migrar para o .env, pode criar um ADR explicando a estratégia q iremos adotar e seguir com a implementação 15 e 16. Siga as diretrizes que decidimos para o healthcheck

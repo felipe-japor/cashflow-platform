@@ -2,6 +2,7 @@ using Lancamentos.Api;
 using Lancamentos.Application.UseCases;
 using Lancamentos.Domain.Exceptions;
 using Lancamentos.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddLancamentosInfrastructure(builder.Configuration);
 builder.Services.AddScoped<RegistrarLancamentoHandler>();
 builder.Services.AddScoped<ConsultarLancamentosHandler>();
+
+// Readiness verifica só o PostgreSQL — única dependência real do caminho HTTP síncrono deste
+// serviço; o broker fica de fora por decisão explícita (ADR-007, issue #15).
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("LancamentosDb")!,
+        name: "postgres",
+        tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -67,6 +76,14 @@ app.MapGet("/lancamentos", async (
 });
 
 app.MapGet("/", () => Results.Ok(new { service = "Lancamentos" }));
+
+// Liveness: só confirma que o processo está de pé, sem tocar nenhuma dependência externa
+// (Predicate ==> nenhuma checagem registrada é executada).
+app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+
+// Readiness: só a checagem tagueada "ready" (PostgreSQL) — ver ADR-007 para o racional de
+// deixar o broker fora.
+app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
 
 app.Run();
 

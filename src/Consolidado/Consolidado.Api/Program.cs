@@ -1,6 +1,7 @@
 using Consolidado.Api;
 using Consolidado.Application.UseCases;
 using Consolidado.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddConsolidadoInfrastructure(builder.Configuration);
 builder.Services.AddScoped<ConsultarConsolidadoDiaHandler>();
 builder.Services.AddScoped<ConsultarConsolidadoPeriodoHandler>();
+
+// Readiness verifica só o PostgreSQL — único dado real que os endpoints de consulta leem no
+// caminho HTTP síncrono; o broker fica de fora por decisão explícita (ADR-007, issue #15).
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("ConsolidadoDb")!,
+        name: "postgres",
+        tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -64,6 +73,14 @@ app.MapGet("/consolidado", async (
 });
 
 app.MapGet("/", () => Results.Ok(new { service = "Consolidado" }));
+
+// Liveness: só confirma que o processo está de pé, sem tocar nenhuma dependência externa
+// (Predicate ==> nenhuma checagem registrada é executada).
+app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+
+// Readiness: só a checagem tagueada "ready" (PostgreSQL) — ver ADR-007 para o racional de
+// deixar o broker fora.
+app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
 
 app.Run();
 
