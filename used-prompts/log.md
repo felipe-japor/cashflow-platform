@@ -571,3 +571,9 @@ a recomendação transversal de manter as três fora do dotnet test da rotina no
 ### 2026-09-07 — 078
 
 trabalhe na issue 18
+
+---
+
+### 2026-09-07 — 079
+
+trabalhe na issue 19
