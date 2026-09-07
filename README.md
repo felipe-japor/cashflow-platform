@@ -1,6 +1,6 @@
 ﻿# Desafio Arquiteto de Soluções — Controle de Fluxo de Caixa
 
-> Status: rascunho inicial (estrutura). Conteúdo a ser desenvolvido.
+> Status: obrigatórios da Fase 2 (implementação) em andamento — cadastro/consulta de lançamentos, outbox/publisher/DLQ/consumer, cálculo/consulta do consolidado, health checks e gestão de secrets já entregues. Ver `docs/adr/` para as decisões arquiteturais e `used-prompts/log.md` para o histórico completo de como a IA foi conduzida.
 
 Solução para o desafio técnico de Arquiteto de Soluções: controle de lançamentos (débito/crédito) e consolidado diário de saldo para um comerciante.
 
@@ -34,7 +34,12 @@ Sobe Postgres (bancos lógicos `lancamentos` e `consolidado` na mesma instância
 - Consolidado: http://localhost:5102
 - RabbitMQ management UI: http://localhost:15672 (guest/guest)
 
-> Nesta etapa (scaffolding — issue #6) os serviços só expõem um endpoint raiz de verificação; os endpoints de negócio (registrar/consultar lançamentos, consultar saldo consolidado) chegam nas próximas issues. Instruções completas de validação local ponta a ponta são finalizadas na issue #22.
+Endpoints disponíveis hoje:
+
+- **Lançamentos** (`:5101`): `POST /lancamentos` (registrar débito/crédito), `GET /lancamentos?dataInicial=&dataFinal=` (consultar por período), `GET /health/live`, `GET /health/ready`.
+- **Consolidado** (`:5102`): `GET /consolidado/{data}` (posição do dia — 404 se ainda não houver lançamento processado para a data), `GET /consolidado?dataInicial=&dataFinal=` (consulta por período), `GET /health/live`, `GET /health/ready`.
+
+> Instruções completas de validação local ponta a ponta (incluindo os diferenciais ainda pendentes) são finalizadas na issue #22.
 
 ## Estrutura do repositório
 
