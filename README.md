@@ -9,7 +9,7 @@ Solução para o desafio técnico de Arquiteto de Soluções: controle de lança
 - [Mapeamento de domínios e capacidades de negócio](docs/domain-mapping.md)
 - [Requisitos funcionais e não funcionais](docs/requirements.md)
 - [Arquitetura](docs/architecture.md)
-- [Roadmap de evolução](docs/evolution-roadmap.md)
+- [Arquitetura de transição](docs/transition-architecture.md)
 - [Estimativa de custos](docs/cost-estimate.md)
 - [Observabilidade](docs/observability.md)
 - [Segurança de integração](docs/integration-security.md)
