@@ -22,8 +22,11 @@ Solução para o desafio técnico de Arquiteto de Soluções: controle de lança
 Pré-requisitos: Docker e Docker Compose.
 
 ```bash
+cp .env.example .env
 docker compose up --build
 ```
+
+> Os valores em `.env.example` são placeholders de desenvolvimento local (`cashflow`/`cashflow`, `guest`/`guest`), não segredos reais — ver ADR-006. `.env` (cópia local, ignorada pelo Git) é a fonte das credenciais injetadas no `docker-compose.yml`; não é preciso alterá-lo para rodar o desafio.
 
 Sobe Postgres (bancos lógicos `lancamentos` e `consolidado` na mesma instância — ADR-003), RabbitMQ (broker local de referência — ADR-004/ADR-005) e os dois serviços:
 

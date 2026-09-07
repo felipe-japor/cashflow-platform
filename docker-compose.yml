@@ -2,8 +2,8 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: cashflow
-      POSTGRES_PASSWORD: cashflow
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     # Instância única hospedando os bancos lógicos "lancamentos" e "consolidado" (ADR-003) —
     # criados pelo script abaixo no primeiro start do container.
     ports:
@@ -12,7 +12,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cashflow"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -20,6 +20,9 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     # Broker de referência local (ADR-004/ADR-005) — Azure Service Bus na arquitetura-alvo.
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -37,8 +40,10 @@ services:
       - "5101:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__LancamentosDb: "Host=postgres;Port=5432;Database=lancamentos;Username=cashflow;Password=cashflow"
+      ConnectionStrings__LancamentosDb: "Host=postgres;Port=5432;Database=lancamentos;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       RabbitMq__HostName: rabbitmq
+      RabbitMq__UserName: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
       # Aplica migrations do EF Core no startup (issue #8) — seguro aqui porque depends_on
       # garante o Postgres saudável antes do container subir; ver comentário em Program.cs.
       Database__MigrateOnStartup: "true"
@@ -56,8 +61,10 @@ services:
       - "5102:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__ConsolidadoDb: "Host=postgres;Port=5432;Database=consolidado;Username=cashflow;Password=cashflow"
+      ConnectionStrings__ConsolidadoDb: "Host=postgres;Port=5432;Database=consolidado;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       RabbitMq__HostName: rabbitmq
+      RabbitMq__UserName: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
       # Aplica migrations do EF Core no startup (issue #12) — mesmo racional do serviço
       # Lançamentos, ver comentário em Program.cs.
       Database__MigrateOnStartup: "true"
