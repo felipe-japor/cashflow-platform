@@ -21,4 +21,19 @@ public interface IDailyConsolidationRepository
     /// <param name="tipo">Crédito ou débito.</param>
     /// <param name="valor">Delta a aplicar.</param>
     Task AplicarLancamentoAsync(Guid eventId, DateOnly data, TipoLancamento tipo, decimal valor, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Posição consolidada de um dia específico (RF04), ou <c>null</c> se nenhum lançamento
+    /// para essa data foi processado ainda — não é responsabilidade do repositório decidir se
+    /// isso é ou não um erro (essa decisão é da borda de API, issue #14).
+    /// </summary>
+    Task<DailyConsolidation?> GetByDataAsync(DateOnly data, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Consolidados com <see cref="DailyConsolidation.Data"/> dentro do intervalo (inclusive nas
+    /// duas pontas), ordenados por data (RF04). Só os dias com registro processado aparecem —
+    /// não há zero-preenchimento de dias sem lançamento, mesmo espírito de RF02 (ausência de
+    /// dado não é erro).
+    /// </summary>
+    Task<IReadOnlyList<DailyConsolidation>> GetByPeriodoAsync(DateOnly dataInicial, DateOnly dataFinal, CancellationToken cancellationToken);
 }

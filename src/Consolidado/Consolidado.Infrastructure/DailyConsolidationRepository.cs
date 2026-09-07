@@ -47,4 +47,13 @@ public class DailyConsolidationRepository(ConsolidadoDbContext dbContext) : IDai
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public Task<DailyConsolidation?> GetByDataAsync(DateOnly data, CancellationToken cancellationToken) =>
+        dbContext.DailyConsolidations.SingleOrDefaultAsync(d => d.Data == data, cancellationToken);
+
+    public async Task<IReadOnlyList<DailyConsolidation>> GetByPeriodoAsync(DateOnly dataInicial, DateOnly dataFinal, CancellationToken cancellationToken) =>
+        await dbContext.DailyConsolidations
+            .Where(d => d.Data >= dataInicial && d.Data <= dataFinal)
+            .OrderBy(d => d.Data)
+            .ToListAsync(cancellationToken);
 }

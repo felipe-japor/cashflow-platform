@@ -1,4 +1,5 @@
 using Consolidado.Application.Ports;
+using Consolidado.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -58,6 +59,12 @@ public class EventConsumerWorkerTests
             Aplicados.Add((eventId, data, tipo, valor));
             return Task.CompletedTask;
         }
+
+        public Task<DailyConsolidation?> GetByDataAsync(DateOnly data, CancellationToken cancellationToken) =>
+            Task.FromResult<DailyConsolidation?>(null);
+
+        public Task<IReadOnlyList<DailyConsolidation>> GetByPeriodoAsync(DateOnly dataInicial, DateOnly dataFinal, CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<DailyConsolidation>>([]);
     }
 
     [Fact]
