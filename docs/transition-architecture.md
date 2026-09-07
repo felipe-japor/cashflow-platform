@@ -1,5 +1,9 @@
 ﻿# Arquitetura de Transição
 
+![Arquitetura de Transição - local (Docker Compose) para Azure (alvo)](diagrams/transition-architecture.png)
+
+> Diagrama fonte: [`diagrams/transition-architecture.xml`](diagrams/transition-architecture.xml) (importável no draw.io). Mapeia cada peça da implementação local (`docker-compose.yml`) para o serviço gerenciado equivalente na arquitetura alvo (`architecture.md`), peça a peça.
+
 > Atende ao diferencial "Desenho da solução da Arquitetura de Transição (se necessária)" e à seção "Observações" do desafio original: "Também são bem vindas descrições sobre o que você gostaria de ter implementado ou evoluções futuras para o sistema proposto." Este documento consolida, num único lugar, decisões que deliberadamente mantivemos simples dentro do orçamento de tempo do desafio (24h) — cada uma com a motivação da escolha atual, o gatilho que justificaria evoluir, e o trade-off aceito enquanto isso não acontece. Não é uma lista de features desejadas soltas: cada linha corresponde a uma decisão real já tomada e documentada (ADR ou issue), com o adiamento explicitado aqui em vez de deixado implícito.
 
 | Evolução | Motivação da decisão atual | Gatilho para evoluir | Trade-off aceito hoje | Referência |
