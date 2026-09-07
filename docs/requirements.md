@@ -71,7 +71,7 @@ OpenTelemetry adotado desde o início nos dois serviços (vendor-neutral), permi
 
 **NFR06 — Portabilidade de infraestrutura**
 
-Interfaces + Factory na borda de infraestrutura (mensageria, cache) permitem trocar a implementação local (RabbitMQ/Redis/PostgreSQL via Docker Compose) por serviços gerenciados no Azure sem reescrever lógica de domínio (ADR-005). Critério de aceite: a troca de implementação fica restrita a configuração/Factory, sem alteração de código de domínio.
+Interfaces + registro condicional via DI na borda de infraestrutura de mensageria permitem trocar a implementação local (RabbitMQ via Docker Compose) por Azure Service Bus sem reescrever lógica de domínio (ADR-005; ver revisão de 2026-09-07 — container de DI substitui uma classe Factory explícita). Critério de aceite: a troca de implementação fica restrita a configuração/registro de DI, sem alteração de código de domínio.
 
 ## Requisitos de negócio (origem: desafio)
 
@@ -83,7 +83,7 @@ Transcrição organizada da seção correspondente do desafio original, com rast
 
 ### Requisitos de negócio
 
-- Serviço que faça o controle de lançamentos → épico do serviço de Lançamentos: #6, #7, #8, #9, #10
+- Serviço que faça o controle de lançamentos → épico do serviço de Lançamentos: #6, #7, #8, #9, #10, #42
 - Serviço do consolidado diário → épico do serviço de Consolidado: #11, #12, #13, #14
 
 ### Requisitos obrigatórios
