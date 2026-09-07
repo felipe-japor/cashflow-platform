@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <!--
+    Referencia os DTOs reais dos dois serviços (RegistrarLancamentoRequest/Response,
+    ConsolidadoResponse) só para reaproveitar os contratos já existentes (mesmo padrão usado nos
+    testes de componente em Lancamentos.Application.Tests/Consolidado.Application.Tests) — evita
+    duplicar os records aqui. Este projeto continua sendo um teste de caixa-preta: ele nunca
+    instancia WebApplicationFactory nem hospeda os serviços em processo, só fala HTTP de verdade
+    com os containers do docker-compose (issue #18).
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Lancamentos\Lancamentos.Api\Lancamentos.Api.csproj" />
+    <ProjectReference Include="..\..\src\Consolidado\Consolidado.Api\Consolidado.Api.csproj" />
+  </ItemGroup>
+
+</Project>

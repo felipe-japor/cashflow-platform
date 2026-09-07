@@ -509,3 +509,65 @@ A issue 17 está apenas na API de consulta, contudo nos requisitos diferenciais 
 ### 2026-09-07 — 068
 
 exatamente, corrija o título e o escopo da issue 17
+
+---
+
+### 2026-09-07 — 069
+
+pode aceitar o PR
+
+---
+
+### 2026-09-07 — 070
+
+AuxArchitect: A respeito da issue 17, Penso a princípio que a maneira mais simples de autenticação e autorização no .net sem usuários (sem identity) seria um APIKey via middleware. Talvez uma validação de header do request. No contexto atual, e sem precisarmos implementar toda a estrutura do Identity, o que você sugere?
+
+---
+
+### 2026-09-07 — 071
+
+Não gostei das sugestões, complexas e desnecessárias, o objetivo é atender ao requisito diferencial 4 da maneira mais simples, rápida e eficiente possível. Reflita novamente, inclusive com abordagens que não sejam a que eu sugeri.
+
+Também não quero novos ADRs, nada está entregue, estamos evoluindo a arquitetura na medida que validamos a POC.
+
+---
+
+### 2026-09-07 — 072
+
+Coloque essas considerações na issue 17 para quando for trabalhada, seguir nessa diretriz
+
+---
+
+### 2026-09-07 — 073
+
+Penso que a consideração de autenticação/autorização, bem como a decisão dos secrets e quaisquer outras de segurança podem ser todas unificadas em um único ADR no que diz respeito à decisões de segurança. Confirme com o SecSpecialist e com o AuxArchitect
+
+---
+
+### 2026-09-07 — 074
+
+vamos deixar em stadby a issue 17 por hora, considerando que é um requisito diferencial, não obrigatório. Quero pensar melhor a respeito disso.
+
+---
+
+### 2026-09-07 — 075
+
+quero considerações do agente tester sobre as issues 18,19,20
+
+---
+
+### 2026-09-07 — 076
+
+com relativo ao 20, aprovado o Nbomber. Pode alterar a issue
+
+---
+
+### 2026-09-07 — 077
+
+a recomendação transversal de manter as três fora do dotnet test da rotina normal também faz todo sentido. pode atualizar as demais issues além da 20
+
+---
+
+### 2026-09-07 — 078
+
+trabalhe na issue 18
