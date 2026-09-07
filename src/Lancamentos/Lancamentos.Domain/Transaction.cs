@@ -1,3 +1,5 @@
+using Lancamentos.Domain.Exceptions;
+
 namespace Lancamentos.Domain;
 
 /// <summary>
@@ -5,9 +7,11 @@ namespace Lancamentos.Domain;
 /// (docs/domain-mapping.md).
 /// </summary>
 /// <remarks>
-/// Guard clauses e regras de validação completas (ex.: valor &gt; 0) são escopo da issue #7
-/// (cadastro e validação) — aqui a entidade só carrega o shape necessário para os projetos
-/// compilarem e a persistência (EF Core, issue #8) e o DI resolverem de verdade.
+/// O construtor é o único ponto de criação (sem setters públicos) e garante o invariante de
+/// RF01 — valor &gt; 0 e tipo dentro do domínio conhecido — antes de qualquer I/O, lançando
+/// <see cref="LancamentoInvalidoException"/> quando violado. "Nada é persistido" no caso
+/// inválido decorre diretamente disso: a validação acontece em memória, antes de qualquer
+/// chamada ao repositório (issue #7).
 /// </remarks>
 public class Transaction
 {
@@ -25,6 +29,16 @@ public class Transaction
 
     public Transaction(DateOnly data, TipoLancamento tipo, decimal valor, string descricao)
     {
+        if (valor <= 0)
+        {
+            throw new LancamentoInvalidoException("O valor do lançamento deve ser maior que zero.");
+        }
+
+        if (!Enum.IsDefined(tipo))
+        {
+            throw new LancamentoInvalidoException($"Tipo de lançamento inválido: '{tipo}'.");
+        }
+
         Id = Guid.NewGuid();
         Data = data;
         Tipo = tipo;

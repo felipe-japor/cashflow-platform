@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Lancamentos.Application.Ports;
 using Lancamentos.Domain;
+using Microsoft.EntityFrameworkCore;
 using DomainTipoLancamento = Lancamentos.Domain.TipoLancamento;
 using ContratoTipoLancamento = Shared.Contracts.TipoLancamento;
 
@@ -13,9 +14,12 @@ namespace Lancamentos.Infrastructure;
 /// banco explícita.
 /// </summary>
 /// <remarks>
-/// Escopo desta issue (#6): shape funcional mínimo, provando que a porta é satisfeita e o DI
-/// resolve. Índices/constraints de schema e cobertura de teste de integração completa com banco
-/// real são das issues #8/#9.
+/// Os testes desta classe usam EF Core InMemory (rápidos, sem dependência de infraestrutura) —
+/// suficiente para provar a lógica de mapeamento/persistência conjunta em si; a prova de que o
+/// mapeamento realmente funciona contra PostgreSQL vem da migration real aplicada (issue #8,
+/// ver <c>Migrations/</c> e o startup do serviço) e da execução via docker-compose, não de um
+/// teste automatizado com banco real — Testcontainers ficaria fora do orçamento desta issue sem
+/// pedido explícito.
 /// </remarks>
 public class TransactionRepository(LancamentosDbContext dbContext) : ITransactionRepository
 {
@@ -33,6 +37,12 @@ public class TransactionRepository(LancamentosDbContext dbContext) : ITransactio
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<Transaction>> GetByPeriodoAsync(DateOnly dataInicial, DateOnly dataFinal, CancellationToken cancellationToken) =>
+        await dbContext.Transactions
+            .Where(t => t.Data >= dataInicial && t.Data <= dataFinal)
+            .OrderBy(t => t.Data)
+            .ToListAsync(cancellationToken);
 
     private static ContratoTipoLancamento Map(DomainTipoLancamento tipo) => tipo switch
     {

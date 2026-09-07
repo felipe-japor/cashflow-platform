@@ -71,4 +71,37 @@ public class TransactionRepositoryTests
         var evento = JsonSerializer.Deserialize<LancamentoRegistrado>(outboxEvent.Payload);
         Assert.Equal(tipoContratoEsperado, evento!.Tipo);
     }
+
+    [Fact]
+    public async Task GetByPeriodoAsync_retorna_apenas_os_lancamentos_dentro_do_intervalo_ordenados_por_data()
+    {
+        using var dbContext = CriarDbContext();
+        var repository = new TransactionRepository(dbContext);
+        var dentroDoInicio = new Transaction(new DateOnly(2026, 9, 1), Lancamentos.Domain.TipoLancamento.Credito, 10m, "Início do intervalo");
+        var dentroDoMeio = new Transaction(new DateOnly(2026, 9, 15), Lancamentos.Domain.TipoLancamento.Debito, 20m, "Meio do intervalo");
+        var dentroDoFim = new Transaction(new DateOnly(2026, 9, 30), Lancamentos.Domain.TipoLancamento.Credito, 30m, "Fim do intervalo");
+        var antesDoIntervalo = new Transaction(new DateOnly(2026, 8, 31), Lancamentos.Domain.TipoLancamento.Credito, 40m, "Antes do intervalo");
+        var depoisDoIntervalo = new Transaction(new DateOnly(2026, 10, 1), Lancamentos.Domain.TipoLancamento.Debito, 50m, "Depois do intervalo");
+        // Insere fora de ordem para provar que a ordenação vem da query, não da ordem de inserção.
+        foreach (var transaction in new[] { dentroDoFim, antesDoIntervalo, dentroDoInicio, depoisDoIntervalo, dentroDoMeio })
+        {
+            await repository.AddAsync(transaction, CancellationToken.None);
+        }
+
+        var resultado = await repository.GetByPeriodoAsync(new DateOnly(2026, 9, 1), new DateOnly(2026, 9, 30), CancellationToken.None);
+
+        Assert.Equal([dentroDoInicio.Id, dentroDoMeio.Id, dentroDoFim.Id], resultado.Select(t => t.Id));
+    }
+
+    [Fact]
+    public async Task GetByPeriodoAsync_retorna_lista_vazia_quando_nao_ha_lancamento_no_periodo()
+    {
+        using var dbContext = CriarDbContext();
+        var repository = new TransactionRepository(dbContext);
+        await repository.AddAsync(new Transaction(new DateOnly(2026, 1, 1), Lancamentos.Domain.TipoLancamento.Credito, 10m, "Fora do período"), CancellationToken.None);
+
+        var resultado = await repository.GetByPeriodoAsync(new DateOnly(2026, 9, 1), new DateOnly(2026, 9, 30), CancellationToken.None);
+
+        Assert.Empty(resultado);
+    }
 }
