@@ -14,8 +14,11 @@ namespace Consolidado.Infrastructure;
 /// <remarks>
 /// A conexão/canal são abertos só quando <see cref="StartConsumingAsync"/> é chamado (issue #12),
 /// não no construtor — o DI resolve esta classe sem I/O, o host sobe mesmo que o broker ainda
-/// não esteja disponível. A mensagem só é confirmada (ack) se o callback concluir sem lançar;
-/// tratamento de DLQ para falhas persistentes é escopo da issue #11.
+/// não esteja disponível. A mensagem só é confirmada (ack) se o callback concluir sem lançar; se
+/// o callback lançar (esgotado o retry curto orquestrado por quem chama — issue #11), a mensagem
+/// é nack'ada sem requeue. A fila principal é declarada com <c>x-dead-letter-exchange</c> apontando
+/// para a dead-letter exchange/queue: o próprio RabbitMQ roteia a mensagem nack'ada para lá
+/// automaticamente, sem nenhuma lógica própria de redelivery ou contagem aqui.
 /// </remarks>
 public sealed class RabbitMqEventConsumer(IOptions<RabbitMqOptions> options)
     : IEventConsumer, IAsyncDisposable
@@ -38,7 +41,16 @@ public sealed class RabbitMqEventConsumer(IOptions<RabbitMqOptions> options)
         _channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await _channel.ExchangeDeclareAsync(_options.Exchange, ExchangeType.Topic, durable: true, autoDelete: false, cancellationToken: cancellationToken);
-        await _channel.QueueDeclareAsync(_options.Queue, durable: true, exclusive: false, autoDelete: false, cancellationToken: cancellationToken);
+
+        // Dead-letter (issue #11): declarada antes da fila principal, que referencia esta
+        // exchange via x-dead-letter-exchange. Fanout porque o único propósito da DLQ é capturar
+        // tudo que for nack'ado sem requeue — não há necessidade de roteamento por routing key.
+        await _channel.ExchangeDeclareAsync(_options.DeadLetterExchange, ExchangeType.Fanout, durable: true, autoDelete: false, cancellationToken: cancellationToken);
+        await _channel.QueueDeclareAsync(_options.DeadLetterQueue, durable: true, exclusive: false, autoDelete: false, cancellationToken: cancellationToken);
+        await _channel.QueueBindAsync(_options.DeadLetterQueue, _options.DeadLetterExchange, routingKey: string.Empty, cancellationToken: cancellationToken);
+
+        var argumentosFilaPrincipal = new Dictionary<string, object?> { ["x-dead-letter-exchange"] = _options.DeadLetterExchange };
+        await _channel.QueueDeclareAsync(_options.Queue, durable: true, exclusive: false, autoDelete: false, arguments: argumentosFilaPrincipal, cancellationToken: cancellationToken);
         await _channel.QueueBindAsync(_options.Queue, _options.Exchange, _options.RoutingKey, cancellationToken: cancellationToken);
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
@@ -47,8 +59,17 @@ public sealed class RabbitMqEventConsumer(IOptions<RabbitMqOptions> options)
             var payload = Encoding.UTF8.GetString(delivery.Body.Span);
             var eventType = delivery.BasicProperties.Type ?? _options.RoutingKey;
 
-            await onMessage(eventType, payload, cancellationToken);
-            await _channel.BasicAckAsync(delivery.DeliveryTag, multiple: false, cancellationToken);
+            try
+            {
+                await onMessage(eventType, payload, cancellationToken);
+                await _channel.BasicAckAsync(delivery.DeliveryTag, multiple: false, cancellationToken);
+            }
+            catch (Exception)
+            {
+                // Callback já esgotou o retry curto (issue #11) — nack sem requeue. O RabbitMQ
+                // roteia automaticamente para a dead-letter exchange configurada na fila.
+                await _channel.BasicNackAsync(delivery.DeliveryTag, multiple: false, requeue: false, cancellationToken);
+            }
         };
 
         await _channel.BasicConsumeAsync(_options.Queue, autoAck: false, consumer, cancellationToken);

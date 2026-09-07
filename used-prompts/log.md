@@ -397,3 +397,21 @@ precisamos criar uma issue, afinal é o RF02. Crie a issue como fase-2-implement
 o 44 aceitei o PR direto no git, o que torna depreciado o doc transition-architecture.md
 
 o 43, está ok. Pode aceitar o PR
+
+---
+
+### 2026-09-07 — 051
+
+eu simplesmente esqueci que o transition-architecture.md já estava lá vazio, por isso mandei criar o evolution-roadmap. O objetivo dos arquivos é o mesmo, não faz sentido existirem dois. Transfira o conteúdo do evolution-roadmap.md para transition-architecture.md, exclua o evolution-roadmap e atualize as referências nas issues e nos documentos.
+
+---
+
+### 2026-09-07 — 052
+
+aceito, pode subir
+
+---
+
+### 2026-09-07 — 053
+
+as implementações de padrões de eventos distribuídos (9,10,11 e 12) podem seguir no mesmo commit. Próximo passo é realizar o loop de desenvolvimento, revisão e testes dessas issues. Quero uma revisão mais detalhada do arquiteto auxiliar nesse PR antes de chegar a mim para ter certeza de que não houve over-engineering.

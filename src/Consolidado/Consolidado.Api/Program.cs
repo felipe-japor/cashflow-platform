@@ -1,4 +1,5 @@
 using Consolidado.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Aplica migrations pendentes no startup, controlado por flag de configuração (default: off) —
+// mesmo racional do serviço Lançamentos (issue #8): WebApplicationFactory sobe o host sem
+// Postgres disponível, e a flag só é ligada no docker-compose, onde o Postgres já está de pé
+// (depends_on: condition: service_healthy) antes do serviço subir.
+if (builder.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ConsolidadoDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Endpoint de consulta do saldo consolidado (RF04) é escopo da issue #14 — aqui só o necessário
 // para provar que o host sobe com a infraestrutura corretamente injetada.

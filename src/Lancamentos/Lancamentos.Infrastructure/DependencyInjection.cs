@@ -19,9 +19,11 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("LancamentosDb")));
 
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+        services.Configure<OutboxPublisherOptions>(configuration.GetSection(OutboxPublisherOptions.SectionName));
 
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+        services.AddHostedService<OutboxPublisherWorker>();
 
         return services;
     }

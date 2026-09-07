@@ -19,9 +19,11 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("ConsolidadoDb")));
 
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+        services.Configure<EventConsumerWorkerOptions>(configuration.GetSection(EventConsumerWorkerOptions.SectionName));
 
         services.AddScoped<IDailyConsolidationRepository, DailyConsolidationRepository>();
         services.AddSingleton<IEventConsumer, RabbitMqEventConsumer>();
+        services.AddHostedService<EventConsumerWorker>();
 
         return services;
     }
