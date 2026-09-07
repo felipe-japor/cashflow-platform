@@ -104,7 +104,7 @@ Transcrição organizada da seção correspondente do desafio original, com rast
 
 | Requisito (texto do desafio) | Issue(s) que atende |
 |---|---|
-| Desenho da solução da Arquitetura de Transição (se necessária) | #26 |
+| Desenho da solução da Arquitetura de Transição (se necessária) | `evolution-roadmap.md` (issue #26, descontinuada em favor deste documento) |
 | Estimativa de custos com infraestrutura e licenças | #25 |
 | Monitoramento e Observabilidade | #21 |
 | Critérios de segurança para consumo (integração) de serviços | #17, #27 |
