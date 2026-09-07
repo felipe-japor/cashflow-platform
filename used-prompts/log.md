@@ -389,3 +389,11 @@ precisamos criar uma issue, afinal é o RF02. Crie a issue como fase-2-implement
 
 2- ok, atualização simples no arquivo.
 1- O projeto ainda não está entregue e nem os ADRs, podemos ajustar os ADR existentes por hora. Só ajuste o ADR-005 ao invés de criar um novo ADR-006 por conta dessa decisão
+
+---
+
+### 2026-09-07 — 050
+
+o 44 aceitei o PR direto no git, o que torna depreciado o doc transition-architecture.md
+
+o 43, está ok. Pode aceitar o PR
