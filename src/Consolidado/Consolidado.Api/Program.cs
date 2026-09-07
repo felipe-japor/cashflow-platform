@@ -1,3 +1,5 @@
+using Consolidado.Api;
+using Consolidado.Application.UseCases;
 using Consolidado.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddConsolidadoInfrastructure(builder.Configuration);
+builder.Services.AddScoped<ConsultarConsolidadoDiaHandler>();
+builder.Services.AddScoped<ConsultarConsolidadoPeriodoHandler>();
 
 var app = builder.Build();
 
@@ -29,8 +33,36 @@ if (builder.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
     dbContext.Database.Migrate();
 }
 
-// Endpoint de consulta do saldo consolidado (RF04) é escopo da issue #14 — aqui só o necessário
-// para provar que o host sobe com a infraestrutura corretamente injetada.
+// Endpoints de consulta do saldo consolidado (RF04, issue #14).
+//
+// Dia sem nenhum lançamento processado ainda: escolhido 404 (não um objeto zerado) — o recurso
+// "posição do dia X" simplesmente não existe no read model ainda. Consistente com o período:
+// dias sem registro dentro do intervalo não aparecem na lista (nem 404 nem zero-preenchidos),
+// mesma decisão de fundo em formato adequado a cada shape (recurso singular vs. coleção) —
+// "ausência de dado" nunca vira erro nem valor sintético, mesmo espírito de RF02.
+app.MapGet("/consolidado/{data}", async (
+    DateOnly data,
+    ConsultarConsolidadoDiaHandler handler,
+    CancellationToken cancellationToken) =>
+{
+    var command = new ConsultarConsolidadoDiaCommand(data);
+    var consolidado = await handler.Handle(command, cancellationToken);
+
+    return consolidado is null ? Results.NotFound() : Results.Ok(ConsolidadoResponse.De(consolidado));
+});
+
+app.MapGet("/consolidado", async (
+    DateOnly dataInicial,
+    DateOnly dataFinal,
+    ConsultarConsolidadoPeriodoHandler handler,
+    CancellationToken cancellationToken) =>
+{
+    var command = new ConsultarConsolidadoPeriodoCommand(dataInicial, dataFinal);
+    var consolidados = await handler.Handle(command, cancellationToken);
+
+    return Results.Ok(consolidados.Select(ConsolidadoResponse.De));
+});
+
 app.MapGet("/", () => Results.Ok(new { service = "Consolidado" }));
 
 app.Run();
