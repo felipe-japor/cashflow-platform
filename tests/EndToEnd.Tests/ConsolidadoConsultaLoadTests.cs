@@ -15,7 +15,7 @@ namespace EndToEnd.Tests;
 /// SLA numérico. Roda contra os containers de longa duração do <c>docker-compose.yml</c> (mesma
 /// infra e mesmas convenções de <see cref="FluxoLancamentoConsolidadoTests"/> e
 /// <see cref="ResilienciaIsolamentoServicosTests"/>) - sem Testcontainers, sem dashboard de
-/// observabilidade de carga (Grafana etc.): o relatório nativo do NBomber (Markdown/HTML,
+/// observabilidade de carga (Grafana etc.): o relatório nativo do NBomber (Markdown/texto,
 /// gravado em <c>tests/EndToEnd.Tests/reports/</c>) já é evidência suficiente, decisão fechada na
 /// issue.
 ///
