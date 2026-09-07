@@ -491,3 +491,21 @@ quais os secrets e senhas que temos atualmente?
 ### 2026-09-07 — 065
 
 ambos são defaults descartáveis. ok, vamos migrar para o .env, pode criar um ADR explicando a estratégia q iremos adotar e seguir com a implementação 15 e 16. Siga as diretrizes que decidimos para o healthcheck
+
+---
+
+### 2026-09-07 — 066
+
+acabei aceitando o PR direto no github com a revisão
+
+---
+
+### 2026-09-07 — 067
+
+A issue 17 está apenas na API de consulta, contudo nos requisitos diferenciais ele enaltece que é para o consumo de todos os serviços
+
+---
+
+### 2026-09-07 — 068
+
+exatamente, corrija o título e o escopo da issue 17
