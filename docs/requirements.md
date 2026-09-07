@@ -83,7 +83,7 @@ Transcrição organizada da seção correspondente do desafio original, com rast
 
 ### Requisitos de negócio
 
-- Serviço que faça o controle de lançamentos → épico do serviço de Lançamentos: #6, #7, #8, #9, #10
+- Serviço que faça o controle de lançamentos → épico do serviço de Lançamentos: #6, #7, #8, #9, #10, #42
 - Serviço do consolidado diário → épico do serviço de Consolidado: #11, #12, #13, #14
 
 ### Requisitos obrigatórios
