@@ -69,3 +69,32 @@ dotnet test tests/EndToEnd.Tests/EndToEnd.Tests.csproj --filter "FullyQualifiedN
 **Atenção ao rodar localmente**: este teste para e reinicia containers do `docker-compose.yml` do
 próprio ambiente onde ele roda. Não rode em paralelo com outra suíte que dependa desses mesmos
 containers estarem sempre no ar.
+
+## `ConsolidadoConsultaLoadTests` (issue #20)
+
+Valida o SLA explícito do desafio - 50 req/s de pico, no máximo 5% de perda - contra
+`GET /consolidado/{data}` (RF04, issue #14), o único endpoint com SLA numérico. Ferramenta:
+[NBomber](https://nbomber.com/) (decisão fechada na issue #20 com o testerAgent e Felipe) - roda
+como um `[Fact]` xUnit comum que registra e executa o cenário de carga via `NBomberRunner`, sem
+exigir binário externo (k6 ficou fora, fora do stack .NET) nem reinventar medição de
+taxa/percentil na mão (script cru com `HttpClient`+`Parallel.ForEach`).
+
+Cenário único, carga **constante** (não spike, não ramp-up, não soak test longo - fora do escopo
+da issue): injeta exatamente 50 requisições/segundo (`Simulation.Inject`, não `KeepConstant`, que
+controla concorrência de "cópias" e não requisições/segundo) por 30s contra o dia corrente. Antes
+de iniciar a carga, o teste registra um lançamento de setup via `POST /lancamentos` e faz o mesmo
+polling de `ConsolidadoPolling` (issue #18) até ele refletir no consolidado - sem isso,
+`GET /consolidado/{data}` responderia 404 sistematicamente (dia sem lançamento processado) e
+infla artificialmente a taxa de "erro" medida sem relação nenhuma com o SLA de fato.
+
+Sem Testcontainers (mesma decisão de #18/#19) e sem infraestrutura de dashboard/observabilidade
+de carga (Grafana etc.) - o relatório nativo do NBomber (Markdown/texto, gravado em
+`tests/EndToEnd.Tests/bin/Debug/net10.0/reports/` a cada execução) já é evidência suficiente. As
+métricas mínimas (taxa de erro/perda e latência p50/p95/p99) também aparecem no console e na
+saída do teste (`dotnet test ... --logger "console;verbosity=detailed"`).
+
+Requer os containers já no ar (`docker compose up --build -d`) - roda isoladamente:
+
+```
+dotnet test tests/EndToEnd.Tests/EndToEnd.Tests.csproj --filter "FullyQualifiedName~ConsolidadoConsultaLoadTests"
+```

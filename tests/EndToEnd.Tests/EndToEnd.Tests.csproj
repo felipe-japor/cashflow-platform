@@ -11,6 +11,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <!-- Teste de carga (issue #20) - NBomber decidido em vez de k6 (fora do stack .NET) ou
+         script cru com HttpClient+Parallel.ForEach (reinventaria medição de taxa/percentil). -->
+    <PackageReference Include="NBomber" Version="6.6.0" />
   </ItemGroup>
 
   <ItemGroup>
