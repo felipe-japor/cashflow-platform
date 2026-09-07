@@ -94,6 +94,26 @@ public class TransactionRepositoryTests
     }
 
     [Fact]
+    public async Task Se_o_commit_e_interrompido_nem_o_lancamento_nem_o_evento_de_outbox_sao_persistidos()
+    {
+        // Prova a atomicidade em si (issue #9, revisão do Arquiteto Adjunto): "o processo morre
+        // entre a escrita e o commit" simulado cancelando o token antes do SaveChangesAsync
+        // completar — lançamento e evento de outbox são adicionados ao mesmo change tracker, mas
+        // nenhum dos dois chega a ser persistido se o commit não se completa. Não é só o caminho
+        // feliz: aqui NENHUM dos dois lados deve sobreviver.
+        using var dbContext = CriarDbContext();
+        var repository = new TransactionRepository(dbContext);
+        var transaction = new Transaction(new DateOnly(2026, 9, 4), Lancamentos.Domain.TipoLancamento.Credito, 100m, "Não deve ser persistido");
+        using var cancelado = new CancellationTokenSource();
+        await cancelado.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => repository.AddAsync(transaction, cancelado.Token));
+
+        Assert.Empty(dbContext.Transactions);
+        Assert.Empty(dbContext.OutboxEvents);
+    }
+
+    [Fact]
     public async Task GetByPeriodoAsync_retorna_lista_vazia_quando_nao_ha_lancamento_no_periodo()
     {
         using var dbContext = CriarDbContext();

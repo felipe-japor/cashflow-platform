@@ -58,6 +58,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__ConsolidadoDb: "Host=postgres;Port=5432;Database=consolidado;Username=cashflow;Password=cashflow"
       RabbitMq__HostName: rabbitmq
+      # Aplica migrations do EF Core no startup (issue #12) — mesmo racional do serviço
+      # Lançamentos, ver comentário em Program.cs.
+      Database__MigrateOnStartup: "true"
     depends_on:
       postgres:
         condition: service_healthy
