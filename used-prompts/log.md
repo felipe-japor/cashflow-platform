@@ -445,3 +445,13 @@ revisei e acabei subindo direto pelo github
 ### 2026-09-07 — 058
 
 vamos seguir para a 13 e 14
+
+---
+
+### 2026-09-07 — 059
+
+vou revisar. Notei uma questão no README.md da pasta dos diagramas, 
+
+quero uma lista com bullets dos diagramas existentes, e quero que a imagem png de referência esteja linkada no arquivo de forma a conseguir ser visualizada no github.
+
+Leve em consideração o documento de arquitetura-alvo para desenhar um novo diagrama (seguindo o mesmo padrão png e xml) da arquitetura de transição e insira-o no contexto explicado acima.
