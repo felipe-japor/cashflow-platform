@@ -39,6 +39,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__LancamentosDb: "Host=postgres;Port=5432;Database=lancamentos;Username=cashflow;Password=cashflow"
       RabbitMq__HostName: rabbitmq
+      # Aplica migrations do EF Core no startup (issue #8) — seguro aqui porque depends_on
+      # garante o Postgres saudável antes do container subir; ver comentário em Program.cs.
+      Database__MigrateOnStartup: "true"
     depends_on:
       postgres:
         condition: service_healthy

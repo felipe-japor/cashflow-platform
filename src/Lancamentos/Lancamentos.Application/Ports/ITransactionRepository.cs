@@ -15,4 +15,11 @@ namespace Lancamentos.Application.Ports;
 public interface ITransactionRepository
 {
     Task AddAsync(Transaction transaction, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Lançamentos com <see cref="Transaction.Data"/> dentro do intervalo (inclusive nas duas
+    /// pontas), ordenados por data (RF02). Nenhum lançamento no período retorna lista vazia —
+    /// não é responsabilidade do repositório decidir se isso é ou não um erro.
+    /// </summary>
+    Task<IReadOnlyList<Transaction>> GetByPeriodoAsync(DateOnly dataInicial, DateOnly dataFinal, CancellationToken cancellationToken);
 }

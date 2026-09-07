@@ -1,6 +1,18 @@
 @Lancamentos.Api_HostAddress = http://localhost:5054
 
-GET {{Lancamentos.Api_HostAddress}}/weatherforecast/
+### RF01 — registrar lançamento
+POST {{Lancamentos.Api_HostAddress}}/lancamentos
+Content-Type: application/json
+
+{
+  "data": "2026-09-07",
+  "tipo": 0,
+  "valor": 150.75,
+  "descricao": "Venda à vista"
+}
+
+### RF02 — consultar lançamentos por período (dataInicial/dataFinal, inclusive nas duas pontas)
+GET {{Lancamentos.Api_HostAddress}}/lancamentos?dataInicial=2026-09-01&dataFinal=2026-09-30
 Accept: application/json
 
 ###

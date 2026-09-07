@@ -10,12 +10,13 @@ public class LancamentosDbContext(DbContextOptions<LancamentosDbContext> options
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Mapeamento mínimo para o esqueleto compilar e migrar (issue #6). Índices, precisão de
-        // decimal e demais ajustes de schema completos são escopo da issue #8.
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.HasKey(t => t.Id);
             entity.Property(t => t.Descricao).IsRequired();
+            // Precisão explícita evita o warning de "decimal sem precisão" do EF Core e fixa
+            // 2 casas decimais, adequado a valores monetários (issue #8).
+            entity.Property(t => t.Valor).HasPrecision(18, 2);
         });
 
         modelBuilder.Entity<OutboxEvent>(entity =>
