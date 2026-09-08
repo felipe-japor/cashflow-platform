@@ -10,7 +10,7 @@ O volume de carga real conhecido é o de NFR02: 50 requisições por segundo em 
 
 ## Decisão
 
-**RabbitMQ** na implementação de referência local (via Docker Compose, junto de PostgreSQL — ADR-003), e **Azure Service Bus** na arquitetura-alvo em produção. A troca entre as duas implementações é resolvida pela mesma abstração de interface + Factory descrita na ADR-005 — o código de domínio depende apenas da interface de publicação/consumo de evento, nunca do SDK concreto do broker.
+**RabbitMQ** na implementação de referência local (via Docker Compose, junto de PostgreSQL — ADR-003), e **Azure Service Bus** na arquitetura-alvo em produção. A troca entre as duas implementações é resolvida pela mesma abstração de interface + registro condicional no DI descrita na ADR-005 — o código de domínio depende apenas da interface de publicação/consumo de evento, nunca do SDK concreto do broker.
 
 RabbitMQ foi escolhido para a implementação local por ser simples de self-host via Docker Compose, uma ferramenta amplamente compreendida no mercado, e por suportar nativamente o padrão pub/sub (exchange/queue) necessário para a relação um-produtor/um-consumidor entre Lançamentos e Consolidado — suficiente para o volume de NFR02 com folga.
 
@@ -23,6 +23,6 @@ RabbitMQ foi escolhido para a implementação local por ser simples de self-host
 
 ## Consequências
 
-- A troca de RabbitMQ (local) para Azure Service Bus (produção) é uma troca de configuração/Factory (ADR-005), não uma reescrita de lógica de domínio ou dos handlers de publicação/consumo de evento.
+- A troca de RabbitMQ (local) para Azure Service Bus (produção) é uma troca de configuração/registro no DI (ADR-005), não uma reescrita de lógica de domínio ou dos handlers de publicação/consumo de evento.
 - O Docker Compose da implementação de referência inclui um container RabbitMQ, ao lado do PostgreSQL (ADR-003).
 - Se, no futuro, o volume real de eventos crescer ordens de grandeza além do previsto em NFR02 (por exemplo, múltiplos consumidores independentes do mesmo evento, necessidade de replay de longo prazo), a adequação de RabbitMQ/Azure Service Bus deve ser reavaliada nessa ocasião, como mudança de escopo real — não antecipada aqui.

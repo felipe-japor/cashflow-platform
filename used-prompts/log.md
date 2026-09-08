@@ -811,3 +811,21 @@ com relação à issue 17, o que auxarchitect sugere?
 ### 2026-09-08 — 115
 
 pode subir o PR
+
+---
+
+### 2026-09-08 — 116
+
+acabei revisando e aceitando direto no github
+
+---
+
+### 2026-09-08 — 117
+
+vamos revisar a issue 23
+
+---
+
+### 2026-09-08 — 118
+
+corrija os 3, não precisa criar novos ADR2, é só uma revisão geral dos documentos e decisões que eventualmente modificamos pra findar o exercício
