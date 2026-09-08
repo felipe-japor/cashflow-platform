@@ -636,10 +636,127 @@ não, sem arquivos de bash. Já confirmei que o down resolve. Faz sentido atuali
 
 ### 2026-09-08 — 089
 
-realizei pequenos ajustes no documento, pode criar um PR
+aceitei no github
 
 ---
 
 ### 2026-09-08 — 090
 
+penso que podemos começar a esboçar uma estimativa de custos. Tanto da arquitetura atual, quanto da arquitetura evoluída.
+
+para a atual, penso em uma VPS ou VM básica rodando o docker compose, cerca de 4gb ram, redundância barata. Faça a cotação entre os principais fornecedores nacionais. Para a arquitetura-alvo, já descrevemos tudo. Faça a cotação também para o container apps (uma possibilidade intermediária de infra). 
+
+Antes de proceder, quero ouvir as considerações do agente especialista de infra.
+
+Penso que a implantação inicial pode reduzir custos, respeitando os NFR.
+
+---
+
+### 2026-09-08 — 091
+
+Esse trabalho representa a issue 25, mas não vamos atuar nela antes de definir as diretrizes. Só começaremos a trabalhar quando eu der ordem explícita. Nessa tarefa quero tanto o arquiteto auxiliar quanto o especialista de infra avaliando as estimativas e referenciando os requisitos. Precisaríamos validar o SLA com um hardware mais restrito para entender os requisitos mínimos.
+
+---
+
+### 2026-09-08 — 092
+
+1- para fins de estimativa de custos em produção, vamos seguir com a sugestão do infraAgent que é mais consistente, em produção o postgreSQL rodando em container não seria interessante pq é um antipadrão, embora para fins de apresentação/desenvolvimento seguimos com o eixo banco+mensageria
+2- nacional é datacenter/suporte no Brasil, pode incluir as multinacionais
+3- redundância barata pensar em backup/snapshot e uma opção mínima de failover
+
+---
+
+### 2026-09-08 — 093
+
+sim, pode começar
+
+---
+
+### 2026-09-08 — 094
+
+nesse contexto, não faz sentido o nível 2 ser mais caro q a perspectiva final por conta da questão de containers. Não faz sentido esse nível, apenas o nível inicial e a expectativa final, considerando os requisitos que comentei. Reajuste os dados de acordo.
+
+---
+
+### 2026-09-08 — 095
+
+ficou ruim dois commits separados, realize o squash e valide
+
+---
+
+### 2026-09-08 — 096
+
+retire as referências de 3 níveis do documento, não faz sentido e não tem histórico indicando
+
+---
+
+### 2026-09-08 — 097
+
+Outra questão além desse trabalho atual. Acho interessante explicar em um readme o AI harness utilizado no projeto. Objetivos e aprovação, uma explicação sucinta do claude.md, do orquestrador, agentes, o hook de logs e componentes. Haja vista que foi definida antes de implementarmos o hook de comandos de IA. Penso que os principais componentes são:
+Contexto persistente, agentes, orquestração dos agentes, guardrails, escalonamento do processo decisório, feedback automatizado, rastreabilidade de IA e Human in the loop. 
+O objetivo é um documento conciso, sem verbarrogia desnecessária. Enumerando os pontos de harness, e explicando o objetivo de controle de qualidade e escopo. De forma que possa ser entendida e reproduzida com simplicidade. Pode trabalhar nesse documento e criar um prefixo no final da bulletlist de documentação do readme:
+
+IA - Harness
+IA - Prompts utilizados no desenvolvimento
+
+---
+
+### 2026-09-08 — 098
+
+realizei pequenos ajustes no documento, pode criar um PR
+
+---
+
+### 2026-09-08 — 099
+
 pode subir o PR 56
+
+---
+
+### 2026-09-08 — 100
+
+o PR 55 não faz sentido o nome 'estimativa de custos em 3 niveis', conforme conversamos acima
+
+---
+
+### 2026-09-08 — 101
+
+ajuste a descrição do PR 55 de acordo com o que conversamos
+
+---
+
+### 2026-09-08 — 102
+
+existem conflitos no 55, por conta da pasta de logs. Ajuste-os
+
+---
+
+### 2026-09-08 — 103
+
+1- é importante colocar uma data no documento, haja vista que os preços podem variar.
+
+2- o documento está desnecessariamente extenso, simplifique-o objetivamente
+
+---
+
+### 2026-09-08 — 104
+
+uma VPS única rodando os 4 containers vai de encontro com a NFR01. Como é um requisito básico, precisamos levar esse requisito em consideração do ponto de vista de infra. O que o Especialista de Infra sugere?
+
+---
+
+### 2026-09-08 — 105
+
+pode atualizar os dois documentos com a topologia de 2 nós, 25 reais a mais por mês faz todo sentido pra um requisito obrigatório ao invés de depender de 'risco aceito', não precisamos mudar nada no código, apenas os documentos
+
+---
+
+### 2026-09-08 — 106
+
+quero que realize um double-check nos preços avaliados
+
+---
+
+### 2026-09-08 — 107
+
+pode mergear o PR 55 e subir
