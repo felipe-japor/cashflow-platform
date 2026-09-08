@@ -15,7 +15,8 @@ Solução para o desafio técnico de Arquiteto de Soluções: controle de lança
 - [Segurança de integração](docs/integration-security.md)
 - [ADRs](docs/adr/)
 - [Diagramas](docs/diagrams/)
-- [Prompts utilizados no desenvolvimento](used-prompts/log.md)
+- [IA - Harness](docs/ai-harness.md)
+- [IA - Prompts utilizados no desenvolvimento](used-prompts/log.md)
 
 ## Como rodar localmente
 
