@@ -631,3 +631,15 @@ testando localmente, o docker compose up --build falha por conta de recursos uti
 ### 2026-09-08 — 088
 
 não, sem arquivos de bash. Já confirmei que o down resolve. Faz sentido atualizarmos o readme. Realizarei alguns testes tentando prender recursos e ver se temos algum edge case nesse contexto.
+
+---
+
+### 2026-09-08 — 089
+
+realizei pequenos ajustes no documento, pode criar um PR
+
+---
+
+### 2026-09-08 — 090
+
+pode subir o PR 56
