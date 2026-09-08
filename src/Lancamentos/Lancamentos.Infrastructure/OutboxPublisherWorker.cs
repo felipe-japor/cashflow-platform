@@ -64,7 +64,13 @@ public sealed class OutboxPublisherWorker(
             try
             {
                 await eventPublisher.PublishAsync(evento.EventType, evento.Payload, cancellationToken);
-                evento.MarcarComoPublicado(DateTime.UtcNow);
+                var publicadoEmUtc = DateTime.UtcNow;
+                evento.MarcarComoPublicado(publicadoEmUtc);
+
+                // Métrica de negócio (issue #21): quanto tempo o evento ficou pendente na outbox
+                // até ser efetivamente publicado — evidencia com dado real o intervalo de
+                // consistência eventual do ADR-001/ADR-002.
+                Telemetry.OutboxLagMs.Record((publicadoEmUtc - evento.OcorridoEmUtc).TotalMilliseconds);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

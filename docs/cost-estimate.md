@@ -21,7 +21,7 @@ Se o Nó B cair — processo ou host inteiro —, o Nó A não é afetado. O inv
 | Compute (Nó B) | VPS pequena (~1GB RAM/1 vCPU) — só Consolidado | US$ 5,00/mês ≈ R$ 25,60/mês (Vultr `vc2-1c-1gb`, único fornecedor com esse tier cotado publicamente) |
 | Banco | PostgreSQL containerizado no Nó A (`postgres:16-alpine`, ADR-003) | Incluído no Compute (Nó A) |
 | Mensageria | RabbitMQ containerizado no Nó A (ADR-004) | Incluído no Compute (Nó A) |
-| Observabilidade | OpenTelemetry → console/Jaeger local (NFR05) | Incluído no Compute |
+| Observabilidade | OpenTelemetry → console/Aspire Dashboard local (NFR05) | Incluído no Compute |
 | Segredos | Variáveis de ambiente / `.env` — sem Key Vault neste nível | Sem custo adicional |
 
 **Total (Vultr, único par de tiers com fonte pública para os dois nós):** R$ 102,40 + R$ 25,60 = **R$ 128,00/mês** — delta de +25% sobre uma VPS única, para fechar NFR01 também na infraestrutura (contra ≈R$ 542,65/mês do Nível 2, que resolve a mesma lacuna).

@@ -37,6 +37,7 @@ Sobe Postgres (bancos lógicos `lancamentos` e `consolidado` na mesma instância
 - Lançamentos: http://localhost:5101
 - Consolidado: http://localhost:5102
 - RabbitMQ management UI: http://localhost:15672 (guest/guest)
+- Aspire Dashboard (traces/métricas/logs via OTLP — issue #21): http://localhost:18888
 
 Endpoints disponíveis hoje:
 
