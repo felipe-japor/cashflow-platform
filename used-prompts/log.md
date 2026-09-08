@@ -791,3 +791,23 @@ A princípio não vi problemas, não temos necessidade de minuciar a informaçã
 ### 2026-09-08 — 112
 
 validado, pode subir o PR 57
+
+---
+
+### 2026-09-08 — 113
+
+com relação à issue 17, o que auxarchitect sugere?
+
+---
+
+### 2026-09-08 — 114
+
+1- Critérios de segurança não necessariamente são implementações de desenvolvimento. Podemos fazer como fizemos com os custos, uma visão geral da expectativa sem necessariamente implementar identity, haja vista que é uma integração/consumo entre serviços, não com usuários. Pode até sugerir uma implementação, mas sem codificação.
+2- tem razão
+3- a 23 e 24 Venho validando e revisando localmente em paralelo com as revisões. São obrigatórias mas eu tenho acompanhado e testado em paralelo, a princípio não serão trabalhosas. O foco é a 17. Poderia remodular isso com o PO do ponto de vista de prioridade, mas são as etapas finais e não quero essa burocracia para o release
+
+---
+
+### 2026-09-08 — 115
+
+pode subir o PR
