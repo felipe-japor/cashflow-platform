@@ -589,3 +589,45 @@ acabei aceitando o PR no github
 ### 2026-09-07 — 081
 
 sim, pode seguir com a 20
+
+---
+
+### 2026-09-07 — 082
+
+pode deixar o NBomber
+
+---
+
+### 2026-09-07 — 083
+
+pode aceitar o PR
+
+---
+
+### 2026-09-07 — 084
+
+a issue 26 já fechamos, certo?
+
+---
+
+### 2026-09-07 — 085
+
+a 22 também já fechamos, certo?
+
+---
+
+### 2026-09-07 — 086
+
+sim, vamos fechar a 22
+
+---
+
+### 2026-09-08 — 087
+
+testando localmente, o docker compose up --build falha por conta de recursos utilizados que não foram limpos, já é a segunda vez que ele entra nesse estado. Não gostaria que os avaliadores encontrassem esse problema. Penso q possamos rodar o down antes por padrão. Não quero precisar redescobrir isso das próximas vezes. Quais abordagens me sugere?
+
+---
+
+### 2026-09-08 — 088
+
+não, sem arquivos de bash. Já confirmei que o down resolve. Faz sentido atualizarmos o readme. Realizarei alguns testes tentando prender recursos e ver se temos algum edge case nesse contexto.

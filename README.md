@@ -23,8 +23,11 @@ Pré-requisitos: Docker e Docker Compose.
 
 ```bash
 cp .env.example .env
+docker compose down --remove-orphans
 docker compose up --build
 ```
+
+> O `down --remove-orphans` antes do `up` garante uma rede/estado limpos mesmo que uma execução anterior tenha ficado de pé — evita falhas de resolução de DNS entre os containers (`Name or service not known`) por rede órfã de uma sessão anterior. Sempre rode nessa ordem, mesmo na primeira vez.
 
 > Os valores em `.env.example` são placeholders de desenvolvimento local (`cashflow`/`cashflow`, `guest`/`guest`), não segredos reais — ver ADR-006. `.env` (cópia local, ignorada pelo Git) é a fonte das credenciais injetadas no `docker-compose.yml`; não é preciso alterá-lo para rodar o desafio.
 
@@ -39,7 +42,7 @@ Endpoints disponíveis hoje:
 - **Lançamentos** (`:5101`): `POST /lancamentos` (registrar débito/crédito), `GET /lancamentos?dataInicial=&dataFinal=` (consultar por período), `GET /health/live`, `GET /health/ready`.
 - **Consolidado** (`:5102`): `GET /consolidado/{data}` (posição do dia — 404 se ainda não houver lançamento processado para a data), `GET /consolidado?dataInicial=&dataFinal=` (consulta por período), `GET /health/live`, `GET /health/ready`.
 
-> Instruções completas de validação local ponta a ponta (incluindo os diferenciais ainda pendentes) são finalizadas na issue #22.
+> Validação local ponta a ponta (subida completa + smoke test do fluxo principal) está coberta pelo teste automatizado em `tests/EndToEnd.Tests` (issue #18/#22). Revisão final em ambiente limpo (clone do zero) fica para a issue #24.
 
 ## Estrutura do repositório
 
