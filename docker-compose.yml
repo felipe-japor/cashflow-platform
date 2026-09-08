@@ -17,6 +17,18 @@ services:
       timeout: 5s
       retries: 10
 
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    # Backend OTLP local (issue #21) — recebe traces/métricas/logs dos dois serviços via OTLP e
+    # expõe a UI de visualização. Auth/TLS vêm habilitados por padrão no dashboard; desabilitados
+    # aqui explicitamente para rodar localmente sem fricção (uso local, sem exposição externa).
+    environment:
+      DASHBOARD__FRONTEND__AUTHMODE: Unsecured
+      DASHBOARD__OTLP__AUTHMODE: Unsecured
+    ports:
+      - "18888:18888" # UI
+      - "18889:18889" # OTLP gRPC
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     # Broker de referência local (ADR-004/ADR-005) — Azure Service Bus na arquitetura-alvo.
@@ -44,6 +56,9 @@ services:
       RabbitMq__HostName: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
+      # Observabilidade (issue #21) — lido automaticamente pelo exportador OTLP do SDK
+      # OpenTelemetry (comportamento default, sem configuração extra em código).
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
       # Aplica migrations do EF Core no startup (issue #8) — seguro aqui porque depends_on
       # garante o Postgres saudável antes do container subir; ver comentário em Program.cs.
       Database__MigrateOnStartup: "true"
@@ -65,6 +80,9 @@ services:
       RabbitMq__HostName: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
+      # Observabilidade (issue #21) — lido automaticamente pelo exportador OTLP do SDK
+      # OpenTelemetry (comportamento default, sem configuração extra em código).
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
       # Aplica migrations do EF Core no startup (issue #12) — mesmo racional do serviço
       # Lançamentos, ver comentário em Program.cs.
       Database__MigrateOnStartup: "true"

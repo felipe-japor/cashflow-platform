@@ -67,7 +67,7 @@ Decorre da garantia at-least-once do broker (ADR-001/ADR-002): reentrega de mens
 
 **NFR05 — Observabilidade ponta a ponta**
 
-OpenTelemetry adotado desde o início nos dois serviços (vendor-neutral), permitindo rastrear o fluxo lançamento → outbox → evento → consolidado. Critério de aceite: traces e métricas visíveis localmente (console/Jaeger) e documentados (issue #21).
+OpenTelemetry adotado desde o início nos dois serviços (vendor-neutral), permitindo rastrear o fluxo lançamento → outbox → evento → consolidado. Critério de aceite: traces e métricas visíveis localmente (console/Aspire Dashboard) e documentados (issue #21).
 
 **NFR06 — Portabilidade de infraestrutura**
 

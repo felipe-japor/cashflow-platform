@@ -760,3 +760,22 @@ quero que realize um double-check nos preços avaliados
 ### 2026-09-08 — 107
 
 pode mergear o PR 55 e subir
+
+---
+
+### 2026-09-08 — 108
+
+com relação à issue 21, não desenvolva ainda. Quero alinhar  com o arquiteto e com o devSr. O que penso a respeito:
+ILogger básico, instrumentação automática do .net core, métricas do runtime, métricas do EF Core, e um Aspire dashboard para visualizar os logs e métricas. Faz sentido pra vocês? Me sugerem algo adicional?
+
+---
+
+### 2026-09-08 — 109
+
+fazem sentido as sugestões adicionais, vamos inseri-las no escopo
+
+---
+
+### 2026-09-08 — 110
+
+pode começar a implementar

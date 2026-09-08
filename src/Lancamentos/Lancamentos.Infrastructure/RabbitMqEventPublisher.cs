@@ -1,6 +1,9 @@
+using System.Diagnostics;
 using System.Text;
 using Lancamentos.Application.Ports;
 using Microsoft.Extensions.Options;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
 
 namespace Lancamentos.Infrastructure;
@@ -29,11 +32,51 @@ public sealed class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options)
         var channel = await GetChannelAsync(cancellationToken);
         var body = Encoding.UTF8.GetBytes(payload);
 
+        // Span Producer (issue #21): não existe auto-instrumentação para RabbitMQ.Client, então
+        // o span e a propagação do trace context são manuais. O nome segue a convenção de
+        // semântica de mensageria da OpenTelemetry ("<destino> <operação>").
+        using var activity = Telemetry.ActivitySource.StartActivity($"{_options.Exchange} publish", ActivityKind.Producer);
+        activity?.SetTag("messaging.system", "rabbitmq");
+        activity?.SetTag("messaging.destination.name", _options.Exchange);
+        activity?.SetTag("messaging.operation.name", "publish");
+
+        var properties = new BasicProperties
+        {
+            // Timestamp da mensagem = momento da publicação (não o de ocorrência do evento de
+            // domínio) — é o dado que o Consolidado usa para a métrica de lag de consolidação
+            // (docs/observability.md). O lag entre ocorrência e publicação já é coberto,
+            // separadamente, por Telemetry.OutboxLagMs no worker de outbox.
+            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
+            Headers = new Dictionary<string, object?>()
+        };
+        InjectTraceContext(activity, properties.Headers!);
+
         await channel.BasicPublishAsync(
             exchange: _options.Exchange,
             routingKey: eventType,
+            mandatory: false,
+            basicProperties: properties,
             body: body,
             cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Injeta o trace context (W3C traceparent) do <paramref name="activity"/> corrente nos
+    /// headers AMQP. Público (mesmo convenção de <see cref="OutboxPublisherWorker.PublicarPendentesAsync"/>)
+    /// para permitir que testes de unidade exercitem a injeção isoladamente, sem canal/conexão
+    /// real.
+    /// </summary>
+    public static void InjectTraceContext(Activity? activity, IDictionary<string, object?> headers)
+    {
+        if (activity is null)
+        {
+            return;
+        }
+
+        Propagators.DefaultTextMapPropagator.Inject(
+            new PropagationContext(activity.Context, Baggage.Current),
+            headers,
+            static (carrier, key, value) => carrier[key] = value);
     }
 
     private async Task<IChannel> GetChannelAsync(CancellationToken cancellationToken)
