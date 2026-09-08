@@ -78,6 +78,17 @@ Consolidado (que exigiria um campo novo no contrato de evento `LancamentoRegistr
 escopo desta issue). Mensagens sem timestamp (não deveria acontecer em produção — o publisher
 sempre atribui) não são contabilizadas, para não poluir o histograma com um valor absurdo.
 
+**Limitação conhecida, validada com o Arquiteto Adjunto**: o timestamp AMQP tem precisão de
+segundo (truncado, não arredondado) — o lag de consolidação medido é sistematicamente
+superestimado em até ~1s frente ao valor real, o que é proporcionalmente mais relevante aqui
+(publish→consumo tende a ser sub-segundo em operação normal) do que no lag do outbox (que já
+opera na casa de segundos, pelo ciclo do worker). Além disso, a métrica compara relógios de hosts
+diferentes (publish no Lançamentos, `UtcNow` no Consolidado) — pressupõe clocks razoavelmente
+sincronizados (NTP), premissa padrão em produção mas que não se verifica automaticamente por
+teste. Aceito como está: é métrica observacional/diferencial, não crítica de negócio, e resolver
+a precisão sem tocar no contrato de domínio exigiria um header AMQP customizado em milissegundos
+— custo que não se justifica só por esta ressalva.
+
 ## Como visualizar localmente (Aspire Dashboard)
 
 O `docker-compose.yml` sobe um container `mcr.microsoft.com/dotnet/aspire-dashboard` como backend
