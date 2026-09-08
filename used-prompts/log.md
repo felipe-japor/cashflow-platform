@@ -829,3 +829,9 @@ vamos revisar a issue 23
 ### 2026-09-08 — 118
 
 corrija os 3, não precisa criar novos ADR2, é só uma revisão geral dos documentos e decisões que eventualmente modificamos pra findar o exercício
+
+---
+
+### 2026-09-08 — 119
+
+pode subir o PR
