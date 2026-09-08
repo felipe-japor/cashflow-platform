@@ -835,3 +835,16 @@ corrija os 3, não precisa criar novos ADR2, é só uma revisão geral dos docum
 ### 2026-09-08 — 119
 
 pode subir o PR
+
+---
+
+### 2026-09-08 — 120
+
+siga com a 24
+
+---
+
+### 2026-09-08 — 121
+
+corrija os 3, revise as estruturas de pastas nas documentações. 
+Pensando, a princípio o custo de colocar uma documentação scalar e uma melhora descritiva com metadados nas Minimal APIs não me parece muito grande. Ainda estamos dentro do prazo do projeto. O que o Po e o arquiteto acham disso?
