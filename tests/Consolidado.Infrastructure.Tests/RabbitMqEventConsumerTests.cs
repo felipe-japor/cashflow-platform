@@ -1,5 +1,7 @@
+using System.Diagnostics.Metrics;
 using System.Text;
 using OpenTelemetry.Context.Propagation;
+using RabbitMQ.Client;
 
 namespace Consolidado.Infrastructure.Tests;
 
@@ -52,5 +54,54 @@ public class RabbitMqEventConsumerTests
 
         Assert.Equal(default, context.TraceId);
         Assert.Equal(default, context.SpanId);
+    }
+
+    [Fact]
+    public void Registra_o_lag_de_consolidacao_quando_o_timestamp_amqp_e_valido()
+    {
+        var publicadoEmUtc = DateTimeOffset.UtcNow.AddMilliseconds(-500);
+        var timestamp = new AmqpTimestamp(publicadoEmUtc.ToUnixTimeSeconds());
+
+        var medicoes = CapturarMedicoesDoHistograma(
+            () => RabbitMqEventConsumer.RegistrarLagDeConsolidacao(timestamp));
+
+        var valor = Assert.Single(medicoes);
+        // Timestamp AMQP tem resolução de segundo (issue #21, docs/observability.md) — a
+        // tolerância cobre o arredondamento sem mascarar um cálculo errado (ex.: sinal invertido).
+        Assert.InRange(valor, 0, 2_000);
+    }
+
+    [Fact]
+    public void Nao_registra_lag_de_consolidacao_quando_o_timestamp_amqp_e_zero_ou_negativo()
+    {
+        var medicoes = CapturarMedicoesDoHistograma(
+            () => RabbitMqEventConsumer.RegistrarLagDeConsolidacao(new AmqpTimestamp(0)));
+
+        Assert.Empty(medicoes);
+    }
+
+    /// <summary>
+    /// Captura, via <see cref="MeterListener"/>, os valores efetivamente gravados no histograma
+    /// <see cref="Telemetry.ConsolidacaoLagMs"/> durante a execução de <paramref name="acao"/> —
+    /// prova que a métrica de negócio (issue #21) é de fato emitida (e com que valor), não só que
+    /// o código roda sem lançar exceção.
+    /// </summary>
+    private static List<double> CapturarMedicoesDoHistograma(Action acao)
+    {
+        var medicoes = new List<double>();
+        using var listener = new MeterListener();
+        listener.InstrumentPublished = (instrument, l) =>
+        {
+            if (instrument.Meter.Name == Telemetry.ServiceName)
+            {
+                l.EnableMeasurementEvents(instrument);
+            }
+        };
+        listener.SetMeasurementEventCallback<double>((_, valor, _, _) => medicoes.Add(valor));
+        listener.Start();
+
+        acao();
+
+        return medicoes;
     }
 }

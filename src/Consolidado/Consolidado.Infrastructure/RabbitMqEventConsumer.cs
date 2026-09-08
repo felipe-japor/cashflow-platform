@@ -99,7 +99,12 @@ public sealed class RabbitMqEventConsumer(IOptions<RabbitMqOptions> options)
     /// não deveria acontecer em produção (o publisher sempre atribui), mas evita poluir o
     /// histograma com um valor absurdo (~56 anos) se algum dia acontecer.
     /// </summary>
-    private static void RegistrarLagDeConsolidacao(AmqpTimestamp publicadoEm)
+    /// <remarks>
+    /// Público (mesma convenção de <see cref="ExtractTraceContext"/>) para permitir que testes de
+    /// unidade exercitem a métrica isoladamente — inclusive o guard de timestamp inválido — sem
+    /// canal/conexão real de broker.
+    /// </remarks>
+    public static void RegistrarLagDeConsolidacao(AmqpTimestamp publicadoEm)
     {
         if (publicadoEm.UnixTime <= 0)
         {
