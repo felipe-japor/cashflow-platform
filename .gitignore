@@ -39,6 +39,10 @@ ScaffoldingReadMe.txt
 # dotenv environment variables file
 .env
 
+# Feature flag local do hook de log de prompts (used-prompts/log.md) — nunca
+# versionada, é uma preferência de sessão/máquina, não uma decisão do projeto.
+.claude/hooks/.log_disabled
+
 # Others
 ~$*
 *~

@@ -866,3 +866,9 @@ O contrato já está explícito pelo enum. Não vamos subir pra evitar adicionar
 ### 2026-09-09 — 124
 
 pode subir o PR
+
+---
+
+### 2026-09-09 — 125
+
+Considero uma primeira versão pronta e passível de release. Irei realizar uma série de testes e validações. Nesse contexto, não faz sentido mais o hook de logs ativo. Podemos criar uma feature-flag simples e desabilitá-lo.

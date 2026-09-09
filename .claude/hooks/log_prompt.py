@@ -17,6 +17,11 @@ from pathlib import Path
 LOG_FILE = Path(__file__).resolve().parents[2] / "used-prompts" / "log.md"
 ENTRY_HEADER_RE = re.compile(r"^### \d{4}-\d{2}-\d{2} — (\d+)\s*$", re.MULTILINE)
 
+# Feature flag local (nunca versionada — ver .gitignore): presença do arquivo
+# desliga o log. Usada durante fases de teste/validação onde os prompts não
+# representam mais desenvolvimento assistido por IA a ser rastreado.
+DISABLE_FLAG = Path(__file__).resolve().parent / ".log_disabled"
+
 
 # Marcadores de conteudo sintetico injetado pelo harness (notificacoes de
 # tarefa em background, etc.) que chegam ao UserPromptSubmit como se fossem
@@ -44,6 +49,9 @@ def next_sequence_number(log_text: str) -> int:
 
 
 def main() -> int:
+    if DISABLE_FLAG.exists():
+        return 0
+
     # Le stdin como bytes crus e decodifica explicitamente como UTF-8. Nao
     # usar sys.stdin.read() (texto): no Windows ele decodifica usando o
     # codepage do console (nao UTF-8) por padrao, mesmo a pipe chegando com
