@@ -10,6 +10,10 @@ Cada diagrama é entregue em dois formatos: `.png` (visualização direta, embut
 
   ![C4 - Container](c4-container.png)
 
+- **C4 - Nível de Componente** — estrutura interna dos dois serviços (Api/Application/Domain/Infrastructure, Clean Architecture) lado a lado (`c4-component.png` / `.xml`)
+
+  ![C4 - Componente](c4-component.png)
+
 - **Sequência - Registrar Lançamento** — fluxo registrar lançamento → outbox → broker → atualização do consolidado (`sequence-registrar-lancamento.png` / `.xml`)
 
   ![Sequência - Registrar Lançamento](sequence-registrar-lancamento.png)
