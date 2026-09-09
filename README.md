@@ -1,6 +1,6 @@
 ﻿# Desafio Arquiteto de Soluções — Controle de Fluxo de Caixa
 
-> Status: obrigatórios da Fase 2 (implementação) em andamento — cadastro/consulta de lançamentos, outbox/publisher/DLQ/consumer, cálculo/consulta do consolidado, health checks e gestão de secrets já entregues. Ver `docs/adr/` para as decisões arquiteturais e `used-prompts/log.md` para o histórico completo de como a IA foi conduzida.
+> Status: obrigatórios e não-funcionais entregues; diferenciais admitidos incrementalmente já concluídos — testes de integração/resiliência/carga (#18-#20), estimativa de custos (#25), observabilidade OpenTelemetry (#21), critérios de segurança de integração (#17/#27). Documentação revisada e validada em ambiente limpo (#23/#24). Ver `docs/adr/` para as decisões arquiteturais e `used-prompts/log.md` para o histórico completo de como a IA foi conduzida.
 
 Solução para o desafio técnico de Arquiteto de Soluções: controle de lançamentos (débito/crédito) e consolidado diário de saldo para um comerciante.
 
@@ -44,14 +44,24 @@ Endpoints disponíveis hoje:
 - **Lançamentos** (`:5101`): `POST /lancamentos` (registrar débito/crédito), `GET /lancamentos?dataInicial=&dataFinal=` (consultar por período), `GET /health/live`, `GET /health/ready`.
 - **Consolidado** (`:5102`): `GET /consolidado/{data}` (posição do dia — 404 se ainda não houver lançamento processado para a data), `GET /consolidado?dataInicial=&dataFinal=` (consulta por período), `GET /health/live`, `GET /health/ready`.
 
-> Validação local ponta a ponta (subida completa + smoke test do fluxo principal) está coberta pelo teste automatizado em `tests/EndToEnd.Tests` (issue #18/#22). Revisão final em ambiente limpo (clone do zero) fica para a issue #24.
+Exemplo de `POST /lancamentos` (note que `tipo` é o valor numérico do enum `TipoLancamento`: `0` = Crédito, `1` = Débito — serialização padrão do System.Text.Json, sem conversor de string):
+
+```bash
+curl -X POST http://localhost:5101/lancamentos \
+  -H "Content-Type: application/json" \
+  -d '{"data":"2026-09-08","tipo":0,"valor":150.75,"descricao":"venda balcão"}'
+```
+
+> Validação local ponta a ponta (subida completa + smoke test do fluxo principal) está coberta pelo teste automatizado em `tests/EndToEnd.Tests` (issue #18/#22). Revisão final em ambiente limpo (clone do zero, issue #24) concluída: fluxo completo e suíte de testes passando sem intervenção manual além das instruções acima.
 
 ## Estrutura do repositório
 
 ```
-/src              código-fonte
-/tests            testes automatizados
-/docs             documentação de arquitetura
+/src              código-fonte (Lancamentos, Consolidado, Shared)
+/tests            testes automatizados (unitários, integração e tests/EndToEnd.Tests)
+/docs             documentação de arquitetura (ADRs, diagramas)
+/docker           scripts de inicialização usados pelo docker-compose (ex.: criação dos bancos lógicos no Postgres)
 /used-prompts     log de prompts usados no desenvolvimento assistido por IA
 docker-compose.yml
+CashFlowPlatform.sln
 ```

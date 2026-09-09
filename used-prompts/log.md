@@ -835,3 +835,34 @@ corrija os 3, não precisa criar novos ADR2, é só uma revisão geral dos docum
 ### 2026-09-08 — 119
 
 pode subir o PR
+
+---
+
+### 2026-09-08 — 120
+
+siga com a 24
+
+---
+
+### 2026-09-08 — 121
+
+corrija os 3, revise as estruturas de pastas nas documentações. 
+Pensando, a princípio o custo de colocar uma documentação scalar e uma melhora descritiva com metadados nas Minimal APIs não me parece muito grande. Ainda estamos dentro do prazo do projeto. O que o Po e o arquiteto acham disso?
+
+---
+
+### 2026-09-08 — 122
+
+AuxArchitect: Sua sugestão não faz muito sentido. Basta documentar a entrada, mudar o caso não muda o fato da ambiguidade de contrato.
+
+---
+
+### 2026-09-09 — 123
+
+O contrato já está explícito pelo enum. Não vamos subir pra evitar adicionar cosméticos desnecessários. Desconsidere.
+
+---
+
+### 2026-09-09 — 124
+
+pode subir o PR
