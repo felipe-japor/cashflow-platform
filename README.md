@@ -22,12 +22,24 @@ Solução para o desafio técnico de Arquiteto de Soluções: controle de lança
 
 Pré-requisitos: Docker e Docker Compose.
 
+**cmd.exe (Prompt de Comando) ou PowerShell:**
+
+```bat
+copy .env.example .env
+docker compose down --remove-orphans
+docker compose up --build
+```
+
+**bash / Git Bash / WSL:**
+
 ```bash
 cp .env.example .env
 docker compose down --remove-orphans
 docker compose up --build
 ```
 
+> `copy` é comando nativo do `cmd.exe` e também funciona no PowerShell (alias de `Copy-Item`) — os dois `docker compose` são idênticos em qualquer shell. Em bash/Git Bash/WSL, use `cp` no lugar (`copy` não existe lá).
+>
 > O `down --remove-orphans` antes do `up` garante uma rede/estado limpos mesmo que uma execução anterior tenha ficado de pé — evita falhas de resolução de DNS entre os containers (`Name or service not known`) por rede órfã de uma sessão anterior. Sempre rode nessa ordem, mesmo na primeira vez.
 
 > Os valores em `.env.example` são placeholders de desenvolvimento local (`cashflow`/`cashflow`, `guest`/`guest`), não segredos reais — ver ADR-006. `.env` (cópia local, ignorada pelo Git) é a fonte das credenciais injetadas no `docker-compose.yml`; não é preciso alterá-lo para rodar o desafio.
@@ -46,10 +58,41 @@ Endpoints disponíveis hoje:
 
 Exemplo de `POST /lancamentos` (note que `tipo` é o valor numérico do enum `TipoLancamento`: `0` = Crédito, `1` = Débito — serialização padrão do System.Text.Json, sem conversor de string):
 
+**cmd.exe (Prompt de Comando):**
+
+```bat
+curl.exe -X POST http://localhost:5101/lancamentos -H "Content-Type: application/json" -d "{\"data\":\"2026-09-08\",\"tipo\":0,\"valor\":150.75,\"descricao\":\"venda balcao\"}"
+```
+
+**PowerShell:**
+
+`curl`/`curl.exe` com esse corpo JSON não funciona no PowerShell — use a forma nativa abaixo:
+
+```powershell
+$body = @{ data = "2026-09-08"; tipo = 0; valor = 150.75; descricao = "venda balcao" } | ConvertTo-Json
+Invoke-RestMethod -Uri http://localhost:5101/lancamentos -Method Post -ContentType "application/json" -Body $body
+```
+
+**bash / Git Bash / WSL:**
+
 ```bash
 curl -X POST http://localhost:5101/lancamentos \
   -H "Content-Type: application/json" \
   -d '{"data":"2026-09-08","tipo":0,"valor":150.75,"descricao":"venda balcão"}'
+```
+
+Exemplo de `GET /consolidado/{data}` (consultar o saldo do dia depois de registrar lançamentos):
+
+**cmd.exe (Prompt de Comando) ou PowerShell:**
+
+```bat
+curl.exe http://localhost:5102/consolidado/2026-09-08
+```
+
+**bash / Git Bash / WSL:**
+
+```bash
+curl http://localhost:5102/consolidado/2026-09-08
 ```
 
 > Validação local ponta a ponta (subida completa + smoke test do fluxo principal) está coberta pelo teste automatizado em `tests/EndToEnd.Tests` (issue #18/#22). Revisão final em ambiente limpo (clone do zero, issue #24) concluída: fluxo completo e suíte de testes passando sem intervenção manual além das instruções acima.
