@@ -43,6 +43,6 @@ Os diagramas abaixo ilustram visualmente o desenho descrito nesta página (`docs
 
 - [C4 - Contexto](diagrams/c4-context.png)
 - [C4 - Container](diagrams/c4-container.png)
-- [C4 - Componente](diagrams/c4-component.png) (estrutura interna, camadas de Clean Architecture)
+- [C4 - Componente](diagrams/c4-component.png)
 - [Sequência - Registrar Lançamento](diagrams/sequence-registrar-lancamento.png)
 - [Arquitetura de Transição](diagrams/transition-architecture.png) (local → Azure alvo)

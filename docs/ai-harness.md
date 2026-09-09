@@ -27,7 +27,7 @@ Nenhum agente decide unilateralmente uma mudança de arquitetura ou de escopo �
 
 ### 3. Orquestração dos agentes
 
-O agente orquestrador (esta sessão) é o único ponto de entrada de Felipe. Ele interpreta o pedido, decide qual agente especializado despachar (ou nenhum, se a tarefa é direta), e integra o resultado de volta à conversa — os agentes especializados não conversam entre si sem passar pelo orquestrador. O fluxo padrão de uma issue (`CLAUDE.md`, seção "Workflow de desenvolvimento"): `devSrAgent` implementa → dúvida real de design vai a `AuxArchitect` antes de chegar a Felipe → `testerAgent` valida o PR → Felipe decide o merge. Varreduras de segurança/infra são sob demanda, fora desse fluxo padrão.
+O agente orquestrador é o único ponto de entrada de Felipe. Ele interpreta o pedido, decide qual agente especializado despachar (ou nenhum, se a tarefa é direta), e integra o resultado de volta à conversa — os agentes especializados não conversam entre si sem passar pelo orquestrador. O fluxo padrão de uma issue (`CLAUDE.md`, seção "Workflow de desenvolvimento"): `devSrAgent` implementa → dúvida real de design vai a `AuxArchitect` antes de chegar a Felipe → `testerAgent` valida o PR → Felipe decide o merge. Varreduras de segurança/infra são sob demanda, fora desse fluxo padrão.
 
 ### 4. Guardrails
 

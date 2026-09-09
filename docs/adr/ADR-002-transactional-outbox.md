@@ -19,6 +19,7 @@ Um publisher separado (worker independente do caminho de escrita da API) lê per
 | Alternativa | Por que não foi escolhida |
 |---|---|
 | Publicar diretamente no broker dentro do próprio handler de escrita do lançamento (sem outbox) | Reintroduz exatamente o problema de dual-write que esta decisão existe para resolver: uma falha do processo entre o commit da transação e a chamada de publicação perde o evento silenciosamente, sem re-tentativa possível, pois nenhum registro do evento pendente sobrevive fora da memória do processo que falhou. |
+| `LISTEN`/`NOTIFY` do Postgres em vez de poll periódico no publisher | Notificação é fire-and-forget — uma desconexão do listener entre o evento e a reconexão perde a notificação, exigindo manter o poll como fallback de qualquer forma (o que anula o ganho). Exige também conexão persistente dedicada fora do pool normal do EF Core, complicando o health-check (ADR-007) sem necessidade real na escala deste projeto (poll de 5s ≈ 0,2 req/s no Postgres compartilhado, irrelevante frente ao SLA de 50 req/s de leitura do Consolidado). |
 
 ## Consequências
 

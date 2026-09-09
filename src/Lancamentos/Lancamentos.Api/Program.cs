@@ -30,6 +30,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+// Sem HTTPS_PORTS configurado no docker-compose (TLS é responsabilidade da infra-alvo, não da
+// app local — docs/integration-security.md), este middleware não redireciona nada hoje; mantido
+// por decisão consciente, não descuido.
 app.UseHttpsRedirection();
 
 // Aplica migrations pendentes no startup, controlado por flag de configuração (default: off).
